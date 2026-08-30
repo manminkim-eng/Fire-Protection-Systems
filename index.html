@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script defer src="/manmin-blog-report/web/assets/manmin-analytics.js"></script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ENGINEER KIM MANMIN · 소방시설 설치 검토 시스템 26MANMIN-Vre3.0</title>
+<title>ENGINEER KIM MANMIN · 소방시설 설치 검토 시스템 MANMIN-Ver5.0</title>
 <meta name="theme-color" content="#0a150a"/>
 <link rel="manifest" href="manifest.json"/>
 <meta name="mobile-web-app-capable" content="yes"/>
@@ -18,8 +17,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png"/>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v5.0.9/dist/web/static/pretendard.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+Mono:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <!-- html2canvas: JPG 출력 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <!-- jsPDF: PDF 출력 -->
@@ -29,7 +28,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --font:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:'Noto Sans Mono',monospace;
+  --mono:'JetBrains Mono','Noto Sans KR',monospace;
   --bg:#080f08;--bg1:#0c160c;
   --surface:#0f1e0f;--surface2:#13251a;
   --border:rgba(34,197,94,.15);--border2:rgba(34,197,94,.35);--border3:rgba(34,197,94,.55);
@@ -442,12 +441,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="header-engineer">Engineer Kim Manmin</div>
       <div class="header-brand">소방시설 설치 검토 시스템</div>
     </div>
-    <div style="margin-bottom:14px;"><div class="ver-badge"><span class="ver-dot"></span>26MANMIN-Vre3.0</div></div>
+    <div style="margin-bottom:14px;"><div class="ver-badge"><span class="ver-dot"></span>MANMIN-Ver5.0</div></div>
     <div class="header-pill"><span class="pulse-dot"></span>FIRE SAFETY SYSTEM · 2026</div>
     <div class="header-tagline">건축물 용도 · 규모 · 구조별 설치 소방시설 자동 산출 | ISO A4 검토서 출력</div>
-    <div class="header-desc">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 제36220호, 2026.3.24 시행)<br/>건축물 정보 입력 후 검토 실행 → A4 미리보기 · PDF 저장 · JPG 저장</div>
+    <div class="header-desc">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 2026.7.1 시행)<br/>건축물 정보 입력 후 검토 실행 → A4 미리보기 · PDF 저장 · JPG 저장</div>
     <div class="law-badges">
-      <div class="law-badge active">시행령 별표4 (2026.03.24)</div>
+      <div class="law-badge active">시행령 별표4 (2026.07.01)</div>
       <div class="law-badge active">별표1 소방시설 종류</div>
       <div class="law-badge active">별표2 특정소방대상물</div>
       <div class="law-badge active">NFTC 화재안전기준</div>
@@ -558,7 +557,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="empty-state" id="empty-state">
         <div class="empty-icon">🧯</div>
         <div class="empty-title">건축물 정보를 입력하세요</div>
-        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">26MANMIN-Vre3.0</span></div>
+        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">MANMIN-Ver5.0</span></div>
       </div>
       <div id="result-content" style="display:none;"></div>
     </div>
@@ -572,7 +571,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="a4-toolbar" id="a4-toolbar">
       <div class="a4-toolbar-left">
         <span style="font-size:14px;">📄</span>
-        <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · 26MANMIN-Vre3.0</span>
+        <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · MANMIN-Ver5.0</span>
       </div>
       <div class="a4-toolbar-right">
         <button class="out-btn pdf" id="a4-pdf-btn"><span class="out-btn-icon">📕</span>PDF 저장</button>
@@ -591,7 +590,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="help-modal-head">
       <div>
         <div class="help-modal-title">📐 사용방법 · 참조 법규</div>
-        <div class="help-modal-ver">26MANMIN-Vre3.0</div>
+        <div class="help-modal-ver">MANMIN-Ver5.0</div>
       </div>
       <button class="help-close" id="help-close">✕</button>
     </div>
@@ -626,11 +625,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="help-panel" id="help-law2">
         <table class="law-table"><thead><tr><th>법령</th><th>내용</th></tr></thead><tbody>
           <tr><td>법률 제18522호</td><td>소방시설 설치 및 관리에 관한 법률 (2024.12.01)</td></tr>
-          <tr><td>대통령령 제36220호</td><td>소방시설 설치 및 관리에 관한 법률 시행령 (2026.03.24)</td></tr>
+          <tr><td>대통령령 [2026.7.1 시행]</td><td>소방시설 설치 및 관리에 관한 법률 시행령 (2026.07.01)</td></tr>
           <tr><td>별표 4</td><td>설치·관리 소방시설의 종류 (제11조) ← 주요기준</td></tr>
           <tr><td>별표 5</td><td>소방시설 설치 면제 기준 (제14조)</td></tr>
           <tr><td>NFTC 101~203</td><td>국가화재안전기준</td></tr>
-          <tr><td>시스템 버전</td><td>26MANMIN-Vre3.0 | Engineer Kim Manmin</td></tr>
+          <tr><td>시스템 버전</td><td>MANMIN-Ver5.0 | Engineer Kim Manmin</td></tr>
         </tbody></table>
       </div>
     </div>
@@ -804,7 +803,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
   var gc=Object.keys(groups).filter(function(k){return groups[k].length>0;}).length;
   var html='<div class="result-header">'
     +'<div class="result-title-row">'
-    +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">26MANMIN-Vre3.0 · 시행령 별표4 (2026.03.24)</div></div>'
+    +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">MANMIN-Ver5.0 · 시행령 별표4 (2026.07.01)</div></div>'
     +'<div class="output-btns">'
     +'<button class="out-btn preview" id="res-a4-btn"><span class="out-btn-icon">📄</span>A4 미리보기</button>'
     +'<button class="out-btn pdf" id="res-pdf-btn"><span class="out-btn-icon">📕</span>PDF 저장</button>'
@@ -813,7 +812,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
     +'<div class="result-meta">'
     +'<div class="meta-item"><div class="meta-label">건축물 용도</div><div class="meta-value" style="font-size:10.5px;">'+catLabel+'</div></div>'
     +'<div class="meta-item"><div class="meta-label">검토 일시</div><div class="meta-value" style="font-size:10px;font-family:var(--mono);">'+dateStr+'</div></div>'
-    +'<div class="meta-item"><div class="meta-label">적용 법령</div><div class="meta-value" style="font-size:10px;">시행령 별표4 (2026.03.24)</div></div>'
+    +'<div class="meta-item"><div class="meta-label">적용 법령</div><div class="meta-value" style="font-size:10px;">시행령 별표4 (2026.07.01)</div></div>'
     +'<div class="meta-item"><div class="meta-label">규모</div><div class="meta-value" style="font-size:10px;">'+addr+'</div></div>'
     +'</div></div>'
     +'<div class="summary-row">'
@@ -843,8 +842,8 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
     });
     html+='</div></div>';
   });
-  html+='<div class="result-footer">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (2026.3.24) 기준 | 실제 적용 시 관할 소방서 및 소방시설관리사 협의 필요<br/>'
-    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · 26MANMIN-Vre3.0</span></div>';
+  html+='<div class="result-footer">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (2026.7.1) 기준 | 실제 적용 시 관할 소방서 및 소방시설관리사 협의 필요<br/>'
+    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.0</span></div>';
   rc.innerHTML=html;
   document.getElementById('res-a4-btn').addEventListener('click',function(){openA4Preview(false);});
   document.getElementById('res-pdf-btn').addEventListener('click',function(){openA4Preview('pdf');});
@@ -895,10 +894,10 @@ function buildA4HTML(d){
 
   return '<div class="a4-doc-header">'
     +'<div><div class="a4-doc-brand">Engineer Kim Manmin · Fire Safety System</div>'
-    +'<div class="a4-doc-ver">26MANMIN-Vre3.0 · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 적용</div>'
+    +'<div class="a4-doc-ver">MANMIN-Ver5.0 · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 적용</div>'
     +'<div class="a4-doc-title">소방시설 설치 검토서</div>'
     +'<div class="a4-doc-sub">Fire Safety Facility Installation Review Report</div></div>'
-    +'<div class="a4-doc-date"><strong>검토서 기준</strong>시행령 별표4<br/>대통령령 제36220호<br/>2026.03.24 시행<br/>'+d.dateStr+'</div>'
+    +'<div class="a4-doc-date"><strong>검토서 기준</strong>시행령 별표4<br/>대통령령 [2026.7.1 시행]<br/>2026.07.01 시행<br/>'+d.dateStr+'</div>'
     +'</div>'
     +'<div class="a4-info-box"><div class="a4-info-grid">'+infoHTML+'</div></div>'
     +'<div class="a4-stats">'
@@ -910,11 +909,11 @@ function buildA4HTML(d){
     +tablesHTML
     +'<div class="a4-caution">'
     +'<div class="a4-caution-title">⚠ 주의사항</div>'
-    +'<div class="a4-caution-text">본 검토서는 소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 제36220호, 2026.3.24 시행) 기준으로 자동 산출한 참고 자료입니다. 실제 소방시설 설계·시공 시에는 관할 소방서 및 소방시설관리사와 반드시 협의하시기 바랍니다. 법령 개정 시 최신 기준을 확인하세요.</div>'
+    +'<div class="a4-caution-text">본 검토서는 소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 2026.7.1 시행) 기준으로 자동 산출한 참고 자료입니다. 실제 소방시설 설계·시공 시에는 관할 소방서 및 소방시설관리사와 반드시 협의하시기 바랍니다. 법령 개정 시 최신 기준을 확인하세요.</div>'
     +'</div>'
     +'<div class="a4-footer">'
     +'<div class="a4-footer-left">ISO A4 (210mm × 297mm) · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 · NFTC 화재안전기준</div>'
-    +'<div class="a4-footer-right">ENGINEER KIM MANMIN · 26MANMIN-Vre3.0</div>'
+    +'<div class="a4-footer-right">ENGINEER KIM MANMIN · MANMIN-Ver5.0</div>'
     +'</div>';
 }
 
@@ -967,7 +966,7 @@ function doSavePDF(d){
       if(pg>0) pdf.addPage();
       pdf.addImage(imgData,'JPEG',0,-(pg*pH),pW,canvasMmH,'','FAST');
     }
-    var fname='소방시설검토서_26MANMIN-Vre3.0_'+(new Date().toISOString().slice(0,10))+'.pdf';
+    var fname='소방시설검토서_MANMIN-Ver5.0_'+(new Date().toISOString().slice(0,10))+'.pdf';
     pdf.save(fname);
     btn.innerHTML=orig; btn.disabled=false;
   }).catch(function(e){console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('PDF 저장 중 오류가 발생했습니다.');});
@@ -989,7 +988,7 @@ function doSaveJPG(){
     ignoreElements:function(el){return el.classList&&el.classList.contains('a4-toolbar');}
   }).then(function(canvas){
     var a=document.createElement('a');
-    a.download='소방시설검토서_26MANMIN-Vre3.0_'+(new Date().toISOString().slice(0,10))+'.jpg';
+    a.download='소방시설검토서_MANMIN-Ver5.0_'+(new Date().toISOString().slice(0,10))+'.jpg';
     a.href=canvas.toDataURL('image/jpeg',0.95);
     document.body.appendChild(a);
     a.click();

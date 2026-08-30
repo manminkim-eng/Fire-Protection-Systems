@@ -1,4 +1,4 @@
-const CACHE_NAME = "sobangsiseorak-v3";
+const CACHE_NAME = "sobangsiseorak-v5.0";
 const ASSETS = [
   "./index.html",
   "./manifest.json"
