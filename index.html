@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ENGINEER KIM MANMIN · 소방시설 설치 검토 시스템 MANMIN-Ver5.0</title>
+<title>ENGINEER KIM MANMIN · 소방시설 설치 검토 시스템 MANMIN-Ver5.1</title>
 <meta name="theme-color" content="#0a150a"/>
 <link rel="manifest" href="manifest.json"/>
 <meta name="mobile-web-app-capable" content="yes"/>
@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png"/>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v5.0.9/dist/web/static/pretendard.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v5.1.9/dist/web/static/pretendard.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+Mono:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <!-- html2canvas: JPG 출력 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -207,7 +207,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   color:#1a1a1a;
   position:relative;
   margin:0 auto 24px;
-  page-break-after:always;
+  /* page-break-after 는 @media print 에서만 제어한다.
+     여기에 always 를 두면 문서가 1장이어도 뒤에 백지 1장이 강제로 붙는다. */
 }
 
 /* A4 내부 — 흰 배경 흑색 텍스트 */
@@ -391,11 +392,68 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .ver-badge{font-size:9.5px;padding:4px 10px;}
 }
 
-/* 인쇄 스타일 */
+/* 캡처 전용 기하 고정 — PDF·JPG 저장 시에만 부여한다.
+   화면 폭에 따라 .a4-paper 가 100% 폭으로 바뀌면(≤840px 분기)
+   DOM 측정값과 794px 로 렌더되는 캔버스의 줄바꿈이 어긋나
+   절단선 계산이 어긋난다. 미디어쿼리보다 우선하도록 !important 로 못박는다. */
+.a4-paper.a4-capture{
+  width:794px!important;
+  min-width:794px!important;
+  min-height:1123px!important;
+  padding:48px 52px 52px!important;
+  margin:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+}
+
+/* ═══════════════════ 인쇄 스타일 ═══════════════════ */
+/* 용지 자체 여백은 0 으로 두고, 여백은 .a4-paper 의 padding 이 담당한다.
+   (양쪽에서 여백을 주면 210mm 콘텐츠가 인쇄 가능 폭을 초과해 축소·잘림이 발생한다) */
+@page{ size:A4 portrait; margin:0; }
+
 @media print{
-  body,html{background:#fff!important;}
-  .bg-layer,.header,.main-layout .input-panel,.result-header,.summary-row,.facility-section,.result-footer,.help-fab-wrap,.help-overlay,.a4-overlay,.a4-toolbar{display:none!important;}
-  .a4-paper{box-shadow:none!important;margin:0!important;padding:12mm 15mm!important;width:210mm!important;min-height:297mm;}
+  html,body{
+    background:#fff!important;margin:0!important;padding:0!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;
+  }
+
+  /* 화면 UI 전부 숨김 */
+  .bg-layer,.header,.main-layout,.help-fab-wrap,.help-overlay,
+  .pwa-banner,.a4-toolbar{display:none!important;}
+
+  /* A4 미리보기가 열려 있을 때만 그 내용을 인쇄 대상으로 삼는다.
+     (종전에는 .a4-overlay 를 통째로 숨겨 인쇄 결과가 백지였다) */
+  .a4-overlay{display:none!important;}
+  .a4-overlay.show{
+    display:block!important;position:static!important;
+    background:none!important;backdrop-filter:none!important;
+    padding:0!important;margin:0!important;overflow:visible!important;
+  }
+
+  .a4-paper{
+    box-shadow:none!important;border-radius:0!important;
+    margin:0!important;padding:12mm 15mm!important;
+    width:210mm!important;min-height:auto!important;
+    break-after:auto;page-break-after:auto;
+  }
+
+  /* ── 표 페이지 분할 제어 ── */
+  table.a4-table{break-inside:auto;page-break-inside:auto;}
+  table.a4-table thead{display:table-header-group;}   /* 다음 장에 헤더 반복 */
+  table.a4-table tfoot{display:table-footer-group;}
+  table.a4-table tr{break-inside:avoid;page-break-inside:avoid;}
+  table.a4-table th,table.a4-table td{break-inside:avoid;page-break-inside:avoid;}
+
+  /* 섹션 제목이 페이지 끝에 홀로 남지 않도록 뒤 요소와 붙인다 */
+  .a4-sec-head{break-inside:avoid;page-break-inside:avoid;
+               break-after:avoid;page-break-after:avoid;}
+
+  /* 박스류는 통째로 유지 */
+  .a4-doc-header,.a4-info-box,.a4-stats,.a4-stat,
+  .a4-caution,.a4-footer{break-inside:avoid;page-break-inside:avoid;}
+
+  /* 고아·과부 줄 방지 */
+  p,td,li{orphans:3;widows:3;}
 }
 
 /* ═══════════════════ PWA 설치 배너 ═══════════════════ */
@@ -441,7 +499,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="header-engineer">Engineer Kim Manmin</div>
       <div class="header-brand">소방시설 설치 검토 시스템</div>
     </div>
-    <div style="margin-bottom:14px;"><div class="ver-badge"><span class="ver-dot"></span>MANMIN-Ver5.0</div></div>
+    <div style="margin-bottom:14px;"><div class="ver-badge"><span class="ver-dot"></span>MANMIN-Ver5.1</div></div>
     <div class="header-pill"><span class="pulse-dot"></span>FIRE SAFETY SYSTEM · 2026</div>
     <div class="header-tagline">건축물 용도 · 규모 · 구조별 설치 소방시설 자동 산출 | ISO A4 검토서 출력</div>
     <div class="header-desc">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 2026.7.1 시행)<br/>건축물 정보 입력 후 검토 실행 → A4 미리보기 · PDF 저장 · JPG 저장</div>
@@ -557,7 +615,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="empty-state" id="empty-state">
         <div class="empty-icon">🧯</div>
         <div class="empty-title">건축물 정보를 입력하세요</div>
-        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">MANMIN-Ver5.0</span></div>
+        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">MANMIN-Ver5.1</span></div>
       </div>
       <div id="result-content" style="display:none;"></div>
     </div>
@@ -571,7 +629,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="a4-toolbar" id="a4-toolbar">
       <div class="a4-toolbar-left">
         <span style="font-size:14px;">📄</span>
-        <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · MANMIN-Ver5.0</span>
+        <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · MANMIN-Ver5.1</span>
       </div>
       <div class="a4-toolbar-right">
         <button class="out-btn pdf" id="a4-pdf-btn"><span class="out-btn-icon">📕</span>PDF 저장</button>
@@ -590,7 +648,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="help-modal-head">
       <div>
         <div class="help-modal-title">📐 사용방법 · 참조 법규</div>
-        <div class="help-modal-ver">MANMIN-Ver5.0</div>
+        <div class="help-modal-ver">MANMIN-Ver5.1</div>
       </div>
       <button class="help-close" id="help-close">✕</button>
     </div>
@@ -629,7 +687,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
           <tr><td>별표 4</td><td>설치·관리 소방시설의 종류 (제11조) ← 주요기준</td></tr>
           <tr><td>별표 5</td><td>소방시설 설치 면제 기준 (제14조)</td></tr>
           <tr><td>NFTC 101~203</td><td>국가화재안전기준</td></tr>
-          <tr><td>시스템 버전</td><td>MANMIN-Ver5.0 | Engineer Kim Manmin</td></tr>
+          <tr><td>시스템 버전</td><td>MANMIN-Ver5.1 | Engineer Kim Manmin</td></tr>
         </tbody></table>
       </div>
     </div>
@@ -803,7 +861,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
   var gc=Object.keys(groups).filter(function(k){return groups[k].length>0;}).length;
   var html='<div class="result-header">'
     +'<div class="result-title-row">'
-    +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">MANMIN-Ver5.0 · 시행령 별표4 (2026.07.01)</div></div>'
+    +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">MANMIN-Ver5.1 · 시행령 별표4 (2026.07.01)</div></div>'
     +'<div class="output-btns">'
     +'<button class="out-btn preview" id="res-a4-btn"><span class="out-btn-icon">📄</span>A4 미리보기</button>'
     +'<button class="out-btn pdf" id="res-pdf-btn"><span class="out-btn-icon">📕</span>PDF 저장</button>'
@@ -843,7 +901,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
     html+='</div></div>';
   });
   html+='<div class="result-footer">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (2026.7.1) 기준 | 실제 적용 시 관할 소방서 및 소방시설관리사 협의 필요<br/>'
-    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.0</span></div>';
+    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.1</span></div>';
   rc.innerHTML=html;
   document.getElementById('res-a4-btn').addEventListener('click',function(){openA4Preview(false);});
   document.getElementById('res-pdf-btn').addEventListener('click',function(){openA4Preview('pdf');});
@@ -894,7 +952,7 @@ function buildA4HTML(d){
 
   return '<div class="a4-doc-header">'
     +'<div><div class="a4-doc-brand">Engineer Kim Manmin · Fire Safety System</div>'
-    +'<div class="a4-doc-ver">MANMIN-Ver5.0 · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 적용</div>'
+    +'<div class="a4-doc-ver">MANMIN-Ver5.1 · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 적용</div>'
     +'<div class="a4-doc-title">소방시설 설치 검토서</div>'
     +'<div class="a4-doc-sub">Fire Safety Facility Installation Review Report</div></div>'
     +'<div class="a4-doc-date"><strong>검토서 기준</strong>시행령 별표4<br/>대통령령 [2026.7.1 시행]<br/>2026.07.01 시행<br/>'+d.dateStr+'</div>'
@@ -913,7 +971,7 @@ function buildA4HTML(d){
     +'</div>'
     +'<div class="a4-footer">'
     +'<div class="a4-footer-left">ISO A4 (210mm × 297mm) · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 · NFTC 화재안전기준</div>'
-    +'<div class="a4-footer-right">ENGINEER KIM MANMIN · MANMIN-Ver5.0</div>'
+    +'<div class="a4-footer-right">ENGINEER KIM MANMIN · MANMIN-Ver5.1</div>'
     +'</div>';
 }
 
@@ -941,35 +999,91 @@ function closeA4Preview(){
 /* ─────────────────────────────────────────
    PDF 저장 (jsPDF + html2canvas)
 ───────────────────────────────────────── */
+/* 안전 절단선 수집 — 여기서 자르면 표의 행이 잘리지 않는다.
+   · 표 본문 행(tbody tr)의 하단
+   · 머리말·정보박스·통계의 하단
+   · 섹션 제목(.a4-sec-head)·주의사항·푸터의 상단  ← 제목만 홀로 남는 것을 방지
+   표 헤더(thead) 하단은 후보에서 제외한다. 그 지점에서 자르면
+   헤더만 페이지 끝에 남고 본문이 다음 장으로 넘어가기 때문이다. */
+function collectSafeCuts(paper){
+  var pr=paper.getBoundingClientRect(), out=[];
+  paper.querySelectorAll('.a4-doc-header,.a4-info-box,.a4-stats,table.a4-table tbody tr')
+    .forEach(function(el){ out.push(el.getBoundingClientRect().bottom-pr.top); });
+  paper.querySelectorAll('.a4-sec-head,.a4-caution,.a4-footer')
+    .forEach(function(el){ out.push(el.getBoundingClientRect().top-pr.top); });
+  out.push(paper.scrollHeight);
+  out.sort(function(a,b){return a-b;});
+  return out.filter(function(v,i,a){return i===0 || v-a[i-1]>0.5;});
+}
+
+/* y 보다 크고 limit 이하인 절단선 중 가장 아래쪽 값 (없으면 0) */
+function pickSafeCut(cuts,y,limit){
+  var best=0;
+  for(var i=0;i<cuts.length;i++){
+    if(cuts[i]>y+1 && cuts[i]<=limit) best=cuts[i];
+    else if(cuts[i]>limit) break;
+  }
+  return best;
+}
+
 function doSavePDF(d){
   var btn=document.getElementById('a4-pdf-btn');
   var orig=btn.innerHTML; btn.innerHTML='<div class="loading-spin"></div> PDF 변환 중...'; btn.disabled=true;
   var paper=document.getElementById('a4-paper');
-  // A4 794px 고정폭, 전체 높이 캡처
+  var CSS_W=794;                        // .a4-paper 화면 폭(px) = A4 210mm
+
+  // 기하를 794px 로 고정한 뒤 측정·캡처해야 절단선과 캔버스가 일치한다
+  paper.classList.add('a4-capture');
+  void paper.offsetHeight;              // 강제 리플로우
+  var cuts=collectSafeCuts(paper);
+  var capH=paper.scrollHeight;
+  var done=function(){paper.classList.remove('a4-capture');};
+
   html2canvas(paper,{
     backgroundColor:'#ffffff',scale:2,useCORS:true,allowTaint:true,
-    width:794,height:paper.scrollHeight,
-    windowWidth:794,windowHeight:paper.scrollHeight,
+    width:CSS_W,height:capH,
+    windowWidth:CSS_W,windowHeight:capH,
     scrollX:0,scrollY:0
   }).then(function(canvas){
-    var imgData=canvas.toDataURL('image/jpeg',0.97);
+    done();
     var jsPDF=window.jspdf&&window.jspdf.jsPDF||window.jsPDF;
     if(!jsPDF){alert('PDF 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.');btn.innerHTML=orig;btn.disabled=false;return;}
     var pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    var pW=pdf.internal.pageSize.getWidth();   // 210mm
-    var pH=pdf.internal.pageSize.getHeight();  // 297mm
-    // canvas px → mm 변환 (A4 너비 기준)
-    var scale=pW/canvas.width;
-    var canvasMmH=canvas.height*scale;
-    var totalPages=Math.ceil(canvasMmH/pH);
-    for(var pg=0;pg<totalPages;pg++){
+    var pW=pdf.internal.pageSize.getWidth();    // 210mm
+    var pH=pdf.internal.pageSize.getHeight();   // 297mm
+    var S=canvas.width/CSS_W;                   // 캔버스 배율(=2)
+    var mmPerPx=pW/CSS_W;                       // css px → mm
+    var docH=canvas.height/S;                   // 문서 전체 높이(css px)
+    var TOP=12, BOT=8;                          // 2장째부터의 상단·하단 여백(mm)
+
+    var y=0, pg=0;
+    while(y<docH-0.5 && pg<60){
+      var topMm   = (pg===0 ? 0 : TOP);
+      var usable  = (pH-topMm-BOT)/mmPerPx;     // 이 장에 담을 수 있는 높이(css px)
+      var ideal   = y+usable;
+      var end;
+      if(ideal>=docH-0.5){
+        end=docH;                                // 마지막 장
+      }else{
+        end=pickSafeCut(cuts,y,ideal);           // 행 경계에서만 자른다
+        if(!end) end=ideal;                      // 한 요소가 한 장보다 큰 예외 상황
+      }
+      var sliceH=end-y;
+      var tmp=document.createElement('canvas');
+      tmp.width=canvas.width;
+      tmp.height=Math.max(1,Math.round(sliceH*S));
+      var ctx=tmp.getContext('2d');
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,tmp.width,tmp.height);
+      ctx.drawImage(canvas,0,Math.round(y*S),canvas.width,tmp.height,0,0,canvas.width,tmp.height);
       if(pg>0) pdf.addPage();
-      pdf.addImage(imgData,'JPEG',0,-(pg*pH),pW,canvasMmH,'','FAST');
+      pdf.addImage(tmp.toDataURL('image/jpeg',0.97),'JPEG',0,topMm,pW,sliceH*mmPerPx,'','FAST');
+      y=end; pg++;
     }
-    var fname='소방시설검토서_MANMIN-Ver5.0_'+(new Date().toISOString().slice(0,10))+'.pdf';
+
+    var fname='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10))+'.pdf';
     pdf.save(fname);
     btn.innerHTML=orig; btn.disabled=false;
-  }).catch(function(e){console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('PDF 저장 중 오류가 발생했습니다.');});
+  }).catch(function(e){done();console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('PDF 저장 중 오류가 발생했습니다.');});
 }
 
 /* ─────────────────────────────────────────
@@ -979,6 +1093,9 @@ function doSaveJPG(){
   var btn=document.getElementById('a4-jpg-btn');
   var orig=btn.innerHTML; btn.innerHTML='<div class="loading-spin"></div> JPG 변환 중...'; btn.disabled=true;
   var paper=document.getElementById('a4-paper');
+  paper.classList.add('a4-capture');          // 794px 기하 고정 (좁은 화면 왜곡 방지)
+  void paper.offsetHeight;
+  var doneJ=function(){paper.classList.remove('a4-capture');};
   var fullH=Math.max(paper.scrollHeight, paper.offsetHeight, 1123);
   html2canvas(paper,{
     backgroundColor:'#ffffff',scale:2,useCORS:true,allowTaint:true,
@@ -987,14 +1104,15 @@ function doSaveJPG(){
     scrollX:0,scrollY:0,
     ignoreElements:function(el){return el.classList&&el.classList.contains('a4-toolbar');}
   }).then(function(canvas){
+    doneJ();
     var a=document.createElement('a');
-    a.download='소방시설검토서_MANMIN-Ver5.0_'+(new Date().toISOString().slice(0,10))+'.jpg';
+    a.download='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10))+'.jpg';
     a.href=canvas.toDataURL('image/jpeg',0.95);
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     btn.innerHTML=orig; btn.disabled=false;
-  }).catch(function(e){console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('JPG 저장 중 오류가 발생했습니다.');});
+  }).catch(function(e){doneJ();console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('JPG 저장 중 오류가 발생했습니다.');});
 }
 
 /* ─────────────────────────────────────────
