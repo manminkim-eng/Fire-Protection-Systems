@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v5.1.9/dist/web/static/pretendard.min.css"/>
 <link rel="stylesheet" href="./assets/fonts/manmin-fonts.css"/><!-- v5.0 로컬 폴백 폰트 — CDN 차단·오프라인 대비. CDN link 보다 먼저 로드되어야 한다 -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+Mono:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <!-- html2canvas: JPG 출력 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <!-- jsPDF: PDF 출력 -->
@@ -204,7 +204,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   border-radius:4px;
   box-shadow:0 20px 60px rgba(0,0,0,.8);
   padding:48px 52px 52px;
-  font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR','Noto Sans KR Local',sans-serif;
+  /* v5.0.1 — 로컬 woff2(Noto Sans KR Local)를 최우선에 둔다.
+     Malgun Gothic 이 앞에 있으면 윈도우에서만 그 폰트로 렌더되어
+     html2canvas 캡처 결과가 기기마다 달라진다. 출력물 통일이 v5.0 의 목적이다.
+     서브셋에 없는 글자는 브라우저가 글자 단위로 뒤 폰트에 폴백한다. */
+  font-family:'Noto Sans KR Local','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   color:#1a1a1a;
   position:relative;
   margin:0 auto 24px;
@@ -410,6 +414,46 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ═══════════════════ 인쇄 스타일 ═══════════════════ */
 /* 용지 자체 여백은 0 으로 두고, 여백은 .a4-paper 의 padding 이 담당한다.
    (양쪽에서 여백을 주면 210mm 콘텐츠가 인쇄 가능 폭을 초과해 축소·잘림이 발생한다) */
+/* ═══════════════════ JPG 저장 시트 (v5.0.1 신설 · §3-5) ═══════════════════
+   2매 이상이면 시트를 띄운다. 브라우저가 연속 자동 다운로드를 차단하기 때문이다. */
+#mm-save-ov{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(4,8,4,.88);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:18px;
+}
+#mm-save-ov.show{display:flex;}
+.mm-sheet{
+  background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);
+  width:100%;max-width:720px;max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:0 24px 70px rgba(0,0,0,.75);
+}
+.mm-sheet-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+}
+.mm-sheet-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;
+  letter-spacing:.12em;color:var(--green3);text-transform:uppercase;}
+.mm-sheet-note{font-size:11px;color:var(--text2);margin-top:4px;letter-spacing:.01em;}
+.mm-sheet-body{padding:16px 18px;overflow-y:auto;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.mm-shot{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius-xs);
+  padding:9px;display:flex;flex-direction:column;gap:8px;}
+.mm-shot img{width:100%;height:auto;border-radius:4px;background:#fff;display:block;}
+.mm-shot-btn{
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:7px 10px;border-radius:7px;border:1px solid rgba(251,191,36,.45);
+  background:none;color:var(--c-amber);font-family:inherit;font-size:11.5px;font-weight:700;
+  cursor:pointer;transition:background .15s,border-color .15s;
+}
+.mm-shot-btn:hover{background:var(--c-amber-b);border-color:var(--c-amber);}
+.mm-sheet-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;
+  padding:13px 18px;border-top:1px solid var(--border);}
+@media(max-width:520px){
+  .mm-sheet-body{grid-template-columns:repeat(2,1fr);padding:12px;}
+  .mm-sheet-foot{justify-content:stretch;}
+  .mm-sheet-foot .out-btn{flex:1;justify-content:center;}
+}
+
 @page{ size:A4 portrait; margin:0; }
 
 @media print{
@@ -1090,6 +1134,79 @@ function doSavePDF(d){
 /* ─────────────────────────────────────────
    JPG 저장 (html2canvas — A4 전체높이)
 ───────────────────────────────────────── */
+/* v5.0.1 — A4 페이지 단위 분할 + 저장 시트 (§3-5)
+   종전에는 문서 전체 높이를 통짜 1장으로 캡처해 곧바로 내려받았다.
+   내용이 3~4장 분량이면 세로로 극단적으로 긴 JPG 가 나왔고, 확인 단계도 없었다.
+   페이지 경계는 doSavePDF 와 같은 수식·같은 절단선을 쓴다 —
+   그래야 "PDF 3장 = JPG 3장" 으로 두 출력물이 어긋나지 않는다(§2②). */
+function mmJpgSegments(paper){
+  var CSS_W=794, mmPerPx=210/CSS_W, pH=297, TOP=12, BOT=8;
+  var cuts=collectSafeCuts(paper);
+  var docH=paper.scrollHeight;
+  var segs=[], y=0, pg=0;
+  while(y<docH-0.5 && pg<60){
+    var topMm=(pg===0?0:TOP);
+    var usable=(pH-topMm-BOT)/mmPerPx;
+    var ideal=y+usable, end;
+    if(ideal>=docH-0.5){ end=docH; }
+    else { end=pickSafeCut(cuts,y,ideal); if(!end) end=ideal; }
+    segs.push([y,end]); y=end; pg++;
+  }
+  return segs.length?segs:[[0,docH]];
+}
+
+function mmDownload(url,name){
+  var a=document.createElement('a');
+  a.download=name; a.href=url;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function mmCloseSheet(){
+  var ov=document.getElementById('mm-save-ov');
+  if(ov) ov.classList.remove('show');
+}
+
+/* 2매 이상일 때만 뜬다. 브라우저가 연속 자동 다운로드를 차단하므로
+   전체 저장도 400ms 간격으로 하나씩 내려받는다. */
+function mmOpenSheet(shots,base){
+  var prev=document.getElementById('mm-save-ov');
+  if(prev) prev.remove();
+  var ov=document.createElement('div');
+  ov.id='mm-save-ov';
+  var body='';
+  shots.forEach(function(url,i){
+    body+='<div class="mm-shot"><img src="'+url+'" alt="'+(i+1)+'쪽 미리보기"/>'
+        + '<button class="mm-shot-btn" data-i="'+i+'">🖼 '+(i+1)+'쪽 저장</button></div>';
+  });
+  ov.innerHTML =
+    '<div class="mm-sheet" role="dialog" aria-modal="true" aria-label="계산서 저장">'
+    + '<div class="mm-sheet-head"><div>'
+    +   '<div class="mm-sheet-title">계산서 저장 · 총 '+shots.length+'매</div>'
+    +   '<div class="mm-sheet-note">브라우저가 연속 다운로드를 차단하므로 쪽별로 저장합니다.</div>'
+    + '</div>'
+    + '<button class="out-btn" id="mm-sheet-x">✕ 닫기</button></div>'
+    + '<div class="mm-sheet-body">'+body+'</div>'
+    + '<div class="mm-sheet-foot">'
+    +   '<button class="out-btn jpg" id="mm-save-all">🖼 전체 저장 ('+shots.length+'매)</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+  ov.classList.add('show');
+
+  ov.querySelectorAll('.mm-shot-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-i');
+      mmDownload(shots[i], base+'_'+(i+1)+'of'+shots.length+'.jpg');
+    });
+  });
+  document.getElementById('mm-sheet-x').addEventListener('click',mmCloseSheet);
+  ov.addEventListener('click',function(e){ if(e.target===ov) mmCloseSheet(); });
+  document.getElementById('mm-save-all').addEventListener('click',function(){
+    shots.forEach(function(url,i){
+      setTimeout(function(){ mmDownload(url, base+'_'+(i+1)+'of'+shots.length+'.jpg'); }, i*400);
+    });
+  });
+}
+
 function doSaveJPG(){
   var btn=document.getElementById('a4-jpg-btn');
   var orig=btn.innerHTML; btn.innerHTML='<div class="loading-spin"></div> JPG 변환 중...'; btn.disabled=true;
@@ -1097,6 +1214,7 @@ function doSaveJPG(){
   paper.classList.add('a4-capture');          // 794px 기하 고정 (좁은 화면 왜곡 방지)
   void paper.offsetHeight;
   var doneJ=function(){paper.classList.remove('a4-capture');};
+  var segs=mmJpgSegments(paper);
   var fullH=Math.max(paper.scrollHeight, paper.offsetHeight, 1123);
   html2canvas(paper,{
     backgroundColor:'#ffffff',scale:2,useCORS:true,allowTaint:true,
@@ -1106,12 +1224,19 @@ function doSaveJPG(){
     ignoreElements:function(el){return el.classList&&el.classList.contains('a4-toolbar');}
   }).then(function(canvas){
     doneJ();
-    var a=document.createElement('a');
-    a.download='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10))+'.jpg';
-    a.href=canvas.toDataURL('image/jpeg',0.95);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    var base='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10));
+    var S=canvas.width/794;
+    var shots=segs.map(function(sg){
+      var h=Math.max(1,Math.round((sg[1]-sg[0])*S));
+      var tmp=document.createElement('canvas');
+      tmp.width=canvas.width; tmp.height=h;
+      var ctx=tmp.getContext('2d');
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,tmp.width,tmp.height);
+      ctx.drawImage(canvas,0,Math.round(sg[0]*S),canvas.width,h,0,0,canvas.width,h);
+      return tmp.toDataURL('image/jpeg',0.95);
+    });
+    if(shots.length===1){ mmDownload(shots[0], base+'.jpg'); }
+    else { mmOpenSheet(shots, base); }
     btn.innerHTML=orig; btn.disabled=false;
   }).catch(function(e){doneJ();console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('JPG 저장 중 오류가 발생했습니다.');});
 }
