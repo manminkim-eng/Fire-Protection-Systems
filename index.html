@@ -201,10 +201,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .a4-paper{
   width:794px;
   min-height:1123px;
+  /* v5.0.2 — 화면 여백을 인쇄 여백과 1:1 로 맞춘다(§3-4-1).
+     인쇄는 @page{margin:0} + padding:12mm 15mm → 96dpi 환산 45px / 57px.
+     내용 영역 : 폭 794-57-57 = 680px(180mm) · 높이 1123-45-45 = 1033px(273mm) */
   background:#ffffff;
   border-radius:4px;
   box-shadow:0 20px 60px rgba(0,0,0,.8);
-  padding:48px 52px 52px;
+  padding:53px 45px 83px 53px;   /* = 14mm 12mm 22mm 14mm — @page 와 동일(§3-4-1) */
   /* v5.0.1 — 로컬 woff2(Noto Sans KR Local)를 최우선에 둔다.
      Malgun Gothic 이 앞에 있으면 윈도우에서만 그 폰트로 렌더되어
      html2canvas 캡처 결과가 기기마다 달라진다. 출력물 통일이 v5.0 의 목적이다.
@@ -370,7 +373,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .result-meta{grid-template-columns:1fr 1fr;}
   .summary-row{grid-template-columns:repeat(2,1fr);}
   .output-btns{flex-direction:column;gap:6px;}
-  .out-btn{width:100%;justify-content:center;padding:10px 12px;font-size:12px;}
+  /* ⛔ v5.0.2 — width:100% 는 출력 버튼 묶음 안에서만 적용한다.
+     전역으로 두면 JPG 저장 시트의 닫기 버튼(.out-btn)까지 100% 폭을 먹어
+     시트 제목이 0px 로 눌리고 글자가 세로로 한 자씩 쌓인다(22번에서 실측 확인). */
+  .output-btns .out-btn,.a4-toolbar-right .out-btn{width:100%;justify-content:center;padding:10px 12px;font-size:12px;}
   .result-title-row{flex-direction:column;align-items:flex-start;gap:8px;}
   /* A4 오버레이 모바일 */
   .a4-overlay{padding:8px 6px;}
@@ -406,7 +412,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   width:794px!important;
   min-width:794px!important;
   min-height:1123px!important;
-  padding:48px 52px 52px!important;
+  padding:53px 45px 83px 53px!important;   /* = @page margin */
   margin:0!important;
   box-shadow:none!important;
   border-radius:0!important;
@@ -432,6 +438,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 18px;border-bottom:1px solid var(--border);
 }
+/* 좌측 텍스트가 폭을 갖고 닫기 버튼이 줄어들어야 한다 */
+.mm-sheet-head > div:first-child{flex:1 1 auto;min-width:0;}
+.mm-sheet-head .out-btn{flex:0 0 auto;}
 .mm-sheet-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;
   letter-spacing:.12em;color:var(--green3);text-transform:uppercase;}
 .mm-sheet-note{font-size:11px;color:var(--text2);margin-top:4px;letter-spacing:.01em;}
@@ -466,7 +475,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   }
 }
 
-@page{ size:A4 portrait; margin:0; }
+/* ⛔ v5.0.3 — @page{margin:0} 은 2쪽부터 윗여백이 사라진다.
+   .a4-paper 의 padding 은 요소 상단에만 적용되므로 페이지가 넘어가면 여백이 없다.
+   MIN 제공 PDF 2쪽 상단이 표에 바로 붙어 나온 원인이다.
+   21 위생배관처럼 @page margin 이 모든 쪽의 여백을 담당하게 바꾼다(§3-3 · §3-4-1). */
+@page{ size:A4 portrait; margin:14mm 12mm 22mm 14mm; }
 
 @media print{
   html,body{
@@ -474,7 +487,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     -webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;
   }
 
-  /* 화면 UI 전부 숨김 */
+  /* 화면 UI 전부 숨김
+     ⛔ v5.0.3 — .wrapper 를 빠뜨리면 안 된다.
+     안의 .header·.main-layout 은 숨겨져도 .wrapper 자체의 padding-bottom:120px 이 남아
+     A4 가 31.8mm 아래로 밀린다. 1쪽 콘텐츠가 여백선에서 46mm 지점에 시작한 원인이다.
+     (A4 오버레이는 .wrapper 밖 body 직속이므로 함께 숨겨도 안전하다) */
+  .wrapper,
   .bg-layer,.header,.main-layout,.help-fab-wrap,.help-overlay,
   .pwa-banner,.a4-toolbar{display:none!important;}
 
@@ -487,15 +505,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     padding:0!important;margin:0!important;overflow:visible!important;
   }
 
+  /* 여백은 @page 하나로만 담당한다. 자체 padding 은 인쇄 시 해제(§3-3). */
   .a4-paper{
     box-shadow:none!important;border-radius:0!important;
-    margin:0!important;padding:12mm 15mm!important;
-    width:210mm!important;min-height:auto!important;
+    margin:0!important;padding:0!important;
+    width:100%!important;max-width:100%!important;min-height:auto!important;
     break-after:auto;page-break-after:auto;
   }
 
   /* ── 표 페이지 분할 제어 ── */
-  table.a4-table{break-inside:auto;page-break-inside:auto;}
+  /* ⛔ v5.0.3 — 표는 통째로 한 장에 둔다. JPG(pickCutPreferSection)와 같은 동작이다.
+     종전 break-inside:auto 는 표를 행 단위로 갈라 다음 장에 반쪽 표를 만들 수 있었다.
+     남은 공간에 표가 안 들어가면 제목과 함께 통째로 다음 장으로 넘어간다. */
+  table.a4-table{break-inside:avoid;page-break-inside:avoid;}
+  /* 한 장보다 긴 표만 예외 — 분할을 허용하고 thead 를 반복한다(§3-3). */
+  table.a4-table.long{break-inside:auto!important;page-break-inside:auto!important;}
   table.a4-table thead{display:table-header-group;}   /* 다음 장에 헤더 반복 */
   table.a4-table tfoot{display:table-footer-group;}
   table.a4-table tr{break-inside:avoid;page-break-inside:avoid;}
@@ -504,6 +528,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   /* 섹션 제목이 페이지 끝에 홀로 남지 않도록 뒤 요소와 붙인다 */
   .a4-sec-head{break-inside:avoid;page-break-inside:avoid;
                break-after:avoid;page-break-after:avoid;}
+  /* v5.0.2 — 제목 바로 뒤 표는 제목과 반드시 같은 장에서 시작한다.
+     break-after:avoid 만으로는 표가 앞장에서 끊길 때 제목만 남는 경우가 있다. */
+  .a4-sec-head + table.a4-table,
+  .a4-sec-head + div > table.a4-table{break-before:avoid;page-break-before:avoid;}
+  /* ⛔ v5.0.3 — tr:nth-child 로 행을 묶던 규칙을 뺐다.
+     브라우저의 thead 반복 처리를 방해해 2쪽 표에 헤더가 안 나오는 원인이 됐다.
+     행 조각 방지는 tr{page-break-inside:avoid} 와 thead 반복으로 충분하다. */
 
   /* 박스류는 통째로 유지 */
   .a4-doc-header,.a4-info-box,.a4-stats,.a4-stat,
@@ -1044,8 +1075,18 @@ function openA4Preview(mode){
   ov.classList.add('show');
   ov.scrollTop=0;  // 오버레이 스크롤 항상 최상단
   document.body.style.overflow='hidden';
+  markLongTables(paper);
   if(mode==='pdf') setTimeout(function(){doPrintPDF();},500);
   else if(mode==='jpg') setTimeout(function(){doSaveJPG();},500);
+}
+
+/* v5.0.3 — 한 장에 못 들어가는 표에는 .long 을 붙여 분할을 허용한다.
+   붙이지 않으면 break-inside:avoid 때문에 표가 잘리거나 넘쳐 나온다. */
+function markLongTables(paper){
+  var mmPerPx=210/794, usable=(297-14-22)/mmPerPx;   /* 261mm ≈ 987px */
+  paper.querySelectorAll('table.a4-table').forEach(function(t){
+    t.classList.toggle('long', t.getBoundingClientRect().height > usable);
+  });
 }
 
 function closeA4Preview(){
@@ -1129,21 +1170,79 @@ function mmContentHeight(paper){
   return (h>0 && h<paper.scrollHeight) ? h : paper.scrollHeight;
 }
 
+/* v5.0.2 — 쪽 나눔을 실제 인쇄 여백과 일치시킨다(§3-5-1).
+   @page{margin:14mm 12mm 22mm 14mm} 이므로
+   인쇄 유효 영역은 폭 210-14-12 = 184mm · 높이 297-14-22 = 261mm(≈987px) 다.
+   종전 TOP 12 · BOT 8 은 근거 없는 값이라 JPG 와 인쇄의 쪽 나눔이 어긋났다.
+   ⛔ .a4-paper 의 padding 은 여백이지 내용이 아니므로 자를 때 빼야 한다(§3-4-1). */
+var MM_PAGE = { W:794, H:1123, MT:14, MR:12, MB:22, ML:14 };   /* mm — @page margin 과 동일 */
+/* v5.0.2 — 섹션 상단(제목) 위치만 따로 모은다.
+   JPG 는 이미지 자르기라 표 중간에서 자르면 다음 장 표에 **헤더가 없다**.
+   인쇄의 thead{display:table-header-group} 같은 장치가 없기 때문이다.
+   그래서 표가 걸칠 때는 가능하면 섹션 경계에서 넘겨 표를 통째로 다음 장에 둔다. */
+function collectSectionTops(paper){
+  var pr=paper.getBoundingClientRect(), out=[];
+  paper.querySelectorAll('.a4-sec-head').forEach(function(el){
+    out.push(el.getBoundingClientRect().top-pr.top);
+  });
+  out.sort(function(a,b){return a-b;});
+  return out;
+}
+
+/* 표 위치 목록 — 절단선이 표를 가르는지 판정하는 데 쓴다. */
+function collectTableRanges(paper){
+  var pr=paper.getBoundingClientRect(), out=[];
+  paper.querySelectorAll('table.a4-table').forEach(function(t){
+    var b=t.getBoundingClientRect();
+    out.push({top:b.top-pr.top, bot:b.bottom-pr.top});
+  });
+  return out;
+}
+
+/* ⛔ 섹션 경계는 "표를 가를 때만" 쓴다.
+   무조건 섹션 경계를 우선하면 앞 쪽이 덜 차서 쪽수가 늘어난다(실측: 2쪽 → 3쪽).
+   기본은 일반 절단선을 쓰고, 그 지점이 표 내부를 지날 때만 섹션 경계로 회피한다. */
+function pickCutPreferSection(cuts, secTops, tables, y, limit, usable){
+  var any=pickSafeCut(cuts, y, limit);
+  if(!any) return 0;
+  var splitsTable=false;
+  for(var t=0;t<tables.length;t++){
+    if(any>tables[t].top+1 && any<tables[t].bot-1){ splitsTable=true; break; }
+  }
+  if(!splitsTable) return any;      /* 표를 가르지 않으면 그대로 */
+  var sec=0;
+  for(var i=0;i<secTops.length;i++){
+    if(secTops[i]>y+1 && secTops[i]<=limit) sec=secTops[i];
+    else if(secTops[i]>limit) break;
+  }
+  /* 섹션 경계로 넘겨도 쪽을 절반 이상 채울 수 있을 때만 회피한다 */
+  if(sec && (sec-y) >= usable*0.5) return sec;
+  return any;
+}
+
 function mmJpgSegments(paper){
-  var CSS_W=794, mmPerPx=210/CSS_W, pH=297, TOP=12, BOT=8;
+  var mmPerPx=210/MM_PAGE.W, pH=297;
+  var cs=getComputedStyle(paper);
+  var padTop=parseFloat(cs.paddingTop)||0, padBot=parseFloat(cs.paddingBottom)||0;
+  var usable=(pH-MM_PAGE.MT-MM_PAGE.MB)/mmPerPx;   /* 261mm ≈ 987px — 전 쪽 동일 */
   var cuts=collectSafeCuts(paper);
+  var secTops=collectSectionTops(paper);
+  var tables=collectTableRanges(paper);
   var docH=mmContentHeight(paper);
-  var segs=[], y=0, pg=0;
-  while(y<docH-0.5 && pg<60){
-    var topMm=(pg===0?0:TOP);
-    var usable=(pH-topMm-BOT)/mmPerPx;
+  var start=padTop, stop=Math.max(start, docH-padBot);
+  var segs=[], y=start, pg=0;
+  while(y<stop-0.5 && pg<60){
     var ideal=y+usable, end;
-    if(ideal>=docH-0.5){ end=docH; }
-    else { end=pickSafeCut(cuts,y,ideal); if(!end) end=ideal; }
+    if(ideal>=stop-0.5){ end=stop; }
+    else { end=pickCutPreferSection(cuts,secTops,tables,y,ideal,usable); if(!end) end=ideal; }
     segs.push([y,end]); y=end; pg++;
   }
-  return segs.length?segs:[[0,docH]];
+  return segs.length ? segs : [[start,stop]];
 }
+/* ⛔ v5.0.3 — 쪽 균형 배분(mmBalance)은 쓰지 않는다.
+   MIN 지시: "강제로 2장을 만들지 말고, 표가 용지에 걸릴 때만 다음 장으로 넘겨라."
+   앞 쪽을 유효 높이까지 채우고 남는 것만 넘긴다. 표가 걸리는 경우의 회피는
+   pickCutPreferSection 이 담당한다. */
 
 function mmDownload(url,name){
   var a=document.createElement('a');
@@ -1215,17 +1314,35 @@ function doSaveJPG(){
   }).then(function(canvas){
     doneJ();
     var base='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10));
+    /* v5.0.2 — 각 쪽을 A4 용지 비율(794 × 1123px · 1:1.4142) 캔버스에 얹는다(§3-5-2).
+       종전에는 내용 높이만큼만 잘라 2쪽이 331px 짜리 납작한 띠로 나왔다.
+       윗여백은 전 쪽에 인쇄와 같은 12mm 를 준다. 세그먼트가 padding 을 제외한
+       순수 내용 구간이므로 MT 를 그대로 얹으면 된다. */
     var S=canvas.width/794;
-    var shots=segs.map(function(sg){
+    var mmPerPx=210/MM_PAGE.W, topPx=MM_PAGE.MT/mmPerPx;
+    var shots=segs.map(function(sg, idx){
       var h=Math.max(1,Math.round((sg[1]-sg[0])*S));
       var tmp=document.createElement('canvas');
-      tmp.width=canvas.width; tmp.height=h;
+      tmp.width=Math.round(MM_PAGE.W*S); tmp.height=Math.round(MM_PAGE.H*S);
       var ctx=tmp.getContext('2d');
       ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,tmp.width,tmp.height);
-      ctx.drawImage(canvas,0,Math.round(sg[0]*S),canvas.width,h,0,0,canvas.width,h);
+      ctx.drawImage(canvas,0,Math.round(sg[0]*S),canvas.width,h,
+                           0,Math.round(topPx*S),canvas.width,h);
+      /* v5.0.2 — 쪽 번호 각인. 2쪽 이상일 때만 좌하단에 찍는다.
+         인쇄는 브라우저 바닥글이 담당하지만 JPG 에는 그런 장치가 없다. */
+      if(segs.length>1){
+        var fs=Math.round(9*S);
+        ctx.fillStyle='#9CA3AF';
+        ctx.font='700 '+fs+'px Orbitron, "JetBrains Mono", monospace';
+        ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+        ctx.fillText((idx+1)+' / '+segs.length,
+                     Math.round(MM_PAGE.ML/mmPerPx*S),
+                     Math.round((MM_PAGE.H - MM_PAGE.MB/mmPerPx + fs/S*0.4)*S));
+      }
       return tmp.toDataURL('image/jpeg',0.95);
     });
-    if(shots.length===1){ mmDownload(shots[0], base+'.jpg'); }
+    /* v5.0.2 — 1매여도 미리보기 시트를 띄운다(§3-5-3). */
+    if(!shots.length){ showToast('저장할 내용이 없습니다'); }
     else { mmOpenSheet(shots, base); }
     btn.innerHTML=orig; btn.disabled=false;
   }).catch(function(e){doneJ();console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('JPG 저장 중 오류가 발생했습니다.');});
