@@ -22,8 +22,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <!-- html2canvas: JPG 출력 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!-- jsPDF: PDF 출력 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- v5.0.1 : PDF 는 브라우저 인쇄(window.print)로 전환했다.
+     소방 01~08 과 동일한 경로이며, 이미지가 아닌 진짜 텍스트 PDF 가 나온다.
+     jsPDF CDN 은 더 이상 필요 없어 제거했다. -->
 <style>
 /* ═══════════════════ RESET & ROOT ═══════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -454,6 +455,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .mm-sheet-foot .out-btn{flex:1;justify-content:center;}
 }
 
+/* v5.0.1 — 버전 각인 (§3-3). position:fixed 라 인쇄 시 매 페이지 우하단에 찍힌다.
+   @page{@bottom-right{...}} 는 Chrome 이 마진박스를 구현하지 않아 아무것도 안 나온다. */
+#dev-stamp{display:none;}
+@media print{
+  #dev-stamp{
+    display:block!important;position:fixed;right:8mm;bottom:6mm;
+    font-family:'Orbitron',sans-serif;font-size:8pt;font-weight:700;
+    color:#9CA3AF;letter-spacing:.06em;z-index:9999;
+  }
+}
+
 @page{ size:A4 portrait; margin:0; }
 
 @media print{
@@ -677,7 +689,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
         <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · MANMIN-Ver5.1</span>
       </div>
       <div class="a4-toolbar-right">
-        <button class="out-btn pdf" id="a4-pdf-btn"><span class="out-btn-icon">📕</span>PDF 저장</button>
+        <button class="out-btn pdf" id="a4-pdf-btn"><span class="out-btn-icon">🖨</span>인쇄 · PDF</button>
         <button class="out-btn jpg" id="a4-jpg-btn"><span class="out-btn-icon">🖼</span>JPG 저장</button>
         <button class="out-btn" id="a4-close-btn" style="border-color:rgba(255,255,255,.2);color:var(--text2);">✕ 닫기</button>
       </div>
@@ -909,7 +921,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
     +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">MANMIN-Ver5.1 · 시행령 별표4 (2026.07.01)</div></div>'
     +'<div class="output-btns">'
     +'<button class="out-btn preview" id="res-a4-btn"><span class="out-btn-icon">📄</span>A4 미리보기</button>'
-    +'<button class="out-btn pdf" id="res-pdf-btn"><span class="out-btn-icon">📕</span>PDF 저장</button>'
+    +'<button class="out-btn pdf" id="res-pdf-btn"><span class="out-btn-icon">🖨</span>인쇄 · PDF</button>'
     +'<button class="out-btn jpg" id="res-jpg-btn"><span class="out-btn-icon">🖼</span>JPG 저장</button>'
     +'</div></div>'
     +'<div class="result-meta">'
@@ -1032,7 +1044,7 @@ function openA4Preview(mode){
   ov.classList.add('show');
   ov.scrollTop=0;  // 오버레이 스크롤 항상 최상단
   document.body.style.overflow='hidden';
-  if(mode==='pdf') setTimeout(function(){doSavePDF(d);},500);
+  if(mode==='pdf') setTimeout(function(){doPrintPDF();},500);
   else if(mode==='jpg') setTimeout(function(){doSaveJPG();},500);
 }
 
@@ -1042,7 +1054,7 @@ function closeA4Preview(){
 }
 
 /* ─────────────────────────────────────────
-   PDF 저장 (jsPDF + html2canvas)
+   PDF 인쇄 (window.print · 소방 01~08 공통 경로)
 ───────────────────────────────────────── */
 /* 안전 절단선 수집 — 여기서 자르면 표의 행이 잘리지 않는다.
    · 표 본문 행(tbody tr)의 하단
@@ -1054,7 +1066,10 @@ function collectSafeCuts(paper){
   var pr=paper.getBoundingClientRect(), out=[];
   paper.querySelectorAll('.a4-doc-header,.a4-info-box,.a4-stats,table.a4-table tbody tr')
     .forEach(function(el){ out.push(el.getBoundingClientRect().bottom-pr.top); });
-  paper.querySelectorAll('.a4-sec-head,.a4-caution,.a4-footer')
+  /* ⛔ v5.0.1 — .a4-footer 를 후보에서 뺐다.
+     푸터 상단을 절단선으로 두면 하필 그 지점에서 잘려 푸터 한 줄만 다음 장으로 밀려난다.
+     실제로 2쪽이 바닥글만 남고 백지가 되는 사고가 났다. 푸터는 앞 장에 붙어야 한다. */
+  paper.querySelectorAll('.a4-sec-head,.a4-caution')
     .forEach(function(el){ out.push(el.getBoundingClientRect().top-pr.top); });
   out.push(paper.scrollHeight);
   out.sort(function(a,b){return a-b;});
@@ -1071,64 +1086,22 @@ function pickSafeCut(cuts,y,limit){
   return best;
 }
 
-function doSavePDF(d){
+/* v5.0.1 — PDF 는 브라우저 인쇄로 뽑는다 (소방 01~08 과 동일 경로).
+   인쇄 대화상자가 뜨므로 사용자가 미리보기·용지·배율을 확인한 뒤 저장한다.
+   결과물이 이미지가 아니라 텍스트 PDF 라 검색·복사가 되고,
+   페이지 분할은 @media print 의 break 규칙이 처리한다. */
+function doPrintPDF(){
+  var ov=document.getElementById('a4-overlay');
+  if(!ov || !ov.classList.contains('show')){ alert('먼저 A4 미리보기를 열어주세요.'); return; }
   var btn=document.getElementById('a4-pdf-btn');
-  var orig=btn.innerHTML; btn.innerHTML='<div class="loading-spin"></div> PDF 변환 중...'; btn.disabled=true;
+  var orig=btn.innerHTML; btn.innerHTML='🖨 인쇄 준비...'; btn.disabled=true;
+  /* 미리보기 축소 배율이 인쇄에 새지 않도록 캡처용 고정 기하를 해제한 상태로 인쇄한다 */
   var paper=document.getElementById('a4-paper');
-  var CSS_W=794;                        // .a4-paper 화면 폭(px) = A4 210mm
-
-  // 기하를 794px 로 고정한 뒤 측정·캡처해야 절단선과 캔버스가 일치한다
-  paper.classList.add('a4-capture');
-  void paper.offsetHeight;              // 강제 리플로우
-  var cuts=collectSafeCuts(paper);
-  var capH=paper.scrollHeight;
-  var done=function(){paper.classList.remove('a4-capture');};
-
-  html2canvas(paper,{
-    backgroundColor:'#ffffff',scale:2,useCORS:true,allowTaint:true,
-    width:CSS_W,height:capH,
-    windowWidth:CSS_W,windowHeight:capH,
-    scrollX:0,scrollY:0
-  }).then(function(canvas){
-    done();
-    var jsPDF=window.jspdf&&window.jspdf.jsPDF||window.jsPDF;
-    if(!jsPDF){alert('PDF 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.');btn.innerHTML=orig;btn.disabled=false;return;}
-    var pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    var pW=pdf.internal.pageSize.getWidth();    // 210mm
-    var pH=pdf.internal.pageSize.getHeight();   // 297mm
-    var S=canvas.width/CSS_W;                   // 캔버스 배율(=2)
-    var mmPerPx=pW/CSS_W;                       // css px → mm
-    var docH=canvas.height/S;                   // 문서 전체 높이(css px)
-    var TOP=12, BOT=8;                          // 2장째부터의 상단·하단 여백(mm)
-
-    var y=0, pg=0;
-    while(y<docH-0.5 && pg<60){
-      var topMm   = (pg===0 ? 0 : TOP);
-      var usable  = (pH-topMm-BOT)/mmPerPx;     // 이 장에 담을 수 있는 높이(css px)
-      var ideal   = y+usable;
-      var end;
-      if(ideal>=docH-0.5){
-        end=docH;                                // 마지막 장
-      }else{
-        end=pickSafeCut(cuts,y,ideal);           // 행 경계에서만 자른다
-        if(!end) end=ideal;                      // 한 요소가 한 장보다 큰 예외 상황
-      }
-      var sliceH=end-y;
-      var tmp=document.createElement('canvas');
-      tmp.width=canvas.width;
-      tmp.height=Math.max(1,Math.round(sliceH*S));
-      var ctx=tmp.getContext('2d');
-      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,tmp.width,tmp.height);
-      ctx.drawImage(canvas,0,Math.round(y*S),canvas.width,tmp.height,0,0,canvas.width,tmp.height);
-      if(pg>0) pdf.addPage();
-      pdf.addImage(tmp.toDataURL('image/jpeg',0.97),'JPEG',0,topMm,pW,sliceH*mmPerPx,'','FAST');
-      y=end; pg++;
-    }
-
-    var fname='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10))+'.pdf';
-    pdf.save(fname);
+  paper.classList.remove('a4-capture');
+  setTimeout(function(){
+    window.print();
     btn.innerHTML=orig; btn.disabled=false;
-  }).catch(function(e){done();console.error(e);btn.innerHTML=orig;btn.disabled=false;alert('PDF 저장 중 오류가 발생했습니다.');});
+  }, 150);
 }
 
 /* ─────────────────────────────────────────
@@ -1137,12 +1110,29 @@ function doSavePDF(d){
 /* v5.0.1 — A4 페이지 단위 분할 + 저장 시트 (§3-5)
    종전에는 문서 전체 높이를 통짜 1장으로 캡처해 곧바로 내려받았다.
    내용이 3~4장 분량이면 세로로 극단적으로 긴 JPG 가 나왔고, 확인 단계도 없었다.
-   페이지 경계는 doSavePDF 와 같은 수식·같은 절단선을 쓴다 —
+   페이지 경계는 A4 인쇄와 같은 수식(297mm · TOP 12 · BOT 8)을 쓴다 —
    그래야 "PDF 3장 = JPG 3장" 으로 두 출력물이 어긋나지 않는다(§2②). */
+/* ⛔ v5.0.1 — .a4-paper 에 min-height:1123px 이 걸려 있어 scrollHeight 를 그대로 쓰면
+   콘텐츠가 끝난 뒤의 빈 여백까지 문서 높이로 잡힌다.
+   그 여백 때문에 "마지막 장" 판정이 빗나가 페이지가 하나 더 생겼다.
+   실제 자식 요소의 가장 아래 지점 + 하단 패딩을 문서 끝으로 본다. */
+function mmContentHeight(paper){
+  var pr=paper.getBoundingClientRect(), max=0;
+  paper.querySelectorAll('*').forEach(function(el){
+    var cs=getComputedStyle(el);
+    if(cs.display==='none' || cs.visibility==='hidden') return;
+    var b=el.getBoundingClientRect().bottom-pr.top;
+    if(b>max) max=b;
+  });
+  var pad=parseFloat(getComputedStyle(paper).paddingBottom)||0;
+  var h=Math.ceil(max+pad);
+  return (h>0 && h<paper.scrollHeight) ? h : paper.scrollHeight;
+}
+
 function mmJpgSegments(paper){
   var CSS_W=794, mmPerPx=210/CSS_W, pH=297, TOP=12, BOT=8;
   var cuts=collectSafeCuts(paper);
-  var docH=paper.scrollHeight;
+  var docH=mmContentHeight(paper);
   var segs=[], y=0, pg=0;
   while(y<docH-0.5 && pg<60){
     var topMm=(pg===0?0:TOP);
@@ -1215,7 +1205,7 @@ function doSaveJPG(){
   void paper.offsetHeight;
   var doneJ=function(){paper.classList.remove('a4-capture');};
   var segs=mmJpgSegments(paper);
-  var fullH=Math.max(paper.scrollHeight, paper.offsetHeight, 1123);
+  var fullH=Math.max(mmContentHeight(paper), 1);   /* v5.0.1 : 빈 여백 캡처 방지 */
   html2canvas(paper,{
     backgroundColor:'#ffffff',scale:2,useCORS:true,allowTaint:true,
     width:794,height:fullH,
@@ -1245,7 +1235,7 @@ function doSaveJPG(){
    A4 오버레이 버튼 이벤트
 ───────────────────────────────────────── */
 document.getElementById('a4-close-btn').addEventListener('click',closeA4Preview);
-document.getElementById('a4-pdf-btn').addEventListener('click',function(){var d=window._RD;if(d)doSavePDF(d);});
+document.getElementById('a4-pdf-btn').addEventListener('click',doPrintPDF);
 document.getElementById('a4-jpg-btn').addEventListener('click',doSaveJPG);
 // 배경 클릭 닫기
 document.getElementById('a4-overlay').addEventListener('click',function(e){
@@ -1344,5 +1334,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeA4Prev
 })();
 </script>
 
+<div id="dev-stamp">MANMIN · Ver-5.1</div>
 </body>
 </html>
