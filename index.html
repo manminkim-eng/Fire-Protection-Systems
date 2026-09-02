@@ -309,37 +309,48 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .a4-footer-right{font-size:8px;color:#15803d;font-weight:700;letter-spacing:.06em;}
 
 /* ═══════════════════ HELP FAB (삼각자) ═══════════════════ */
-.help-fab-wrap{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:5px;}
-.help-fab-triangle{width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:52px solid var(--green);cursor:pointer;filter:drop-shadow(0 4px 14px rgba(21,128,61,.55));transition:filter .25s,transform .25s;position:relative;}
-.help-fab-triangle:hover{filter:drop-shadow(0 8px 26px rgba(21,128,61,.8));transform:scale(1.1) translateY(-2px);}
-.help-fab-inner{position:absolute;bottom:-38px;left:-12px;width:24px;text-align:center;font-size:13px;pointer-events:none;}
-.help-fab-label{font-size:8px;font-weight:800;letter-spacing:.1em;color:var(--green3);text-transform:uppercase;cursor:pointer;}
+.help-fab-wrap{position:fixed;bottom:18px;right:18px;z-index:1200;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+/* v5.0-FAB (2026-09-03) — 소방 마스터 규격(.fml-fab). 색만 도구 토큰(녹색) */
+.help-fab{background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#15803d 100%);color:#fff;border:1px solid rgba(134,239,172,.3);border-radius:16px;padding:11px 15px;cursor:pointer;box-shadow:0 4px 20px rgba(21,128,61,.65);display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.3;font-family:inherit;transition:transform .15s,box-shadow .15s;animation:fabIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes fabIn{from{opacity:0;transform:scale(.3) rotate(-20deg);}to{opacity:1;transform:scale(1) rotate(0);}}
+.help-fab:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(21,128,61,.65);}
+.help-fab:active{transform:translateY(0);}
+.help-fab .fab-icon{font-size:20px;line-height:1;}
+.help-fab .fab-lbl{font-size:10px;font-weight:800;letter-spacing:.04em;}
+.help-fab .fab-sub{font-size:9px;opacity:.8;}
 
 /* ═══════════════════ HELP MODAL ═══════════════════ */
-.help-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);}
-.help-overlay.show{display:flex;align-items:center;justify-content:center;padding:20px;}
-.help-modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:min(540px,95vw);max-height:78vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.7);}
-.help-modal-head{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:linear-gradient(135deg,rgba(21,128,61,.08),transparent);}
-.help-modal-title{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--green3);text-transform:uppercase;}
-.help-modal-ver{font-family:'Orbitron',sans-serif;font-size:8.5px;color:rgba(74,222,128,.65);letter-spacing:.1em;}
-.help-close{width:26px;height:26px;border-radius:6px;background:var(--bg1);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.help-tabs{display:flex;gap:4px;padding:9px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.help-tab{padding:5px 12px;border-radius:6px;font-size:10.5px;font-weight:700;cursor:pointer;transition:all .18s;background:transparent;border:1px solid transparent;color:var(--text3);}
-.help-tab.on{background:var(--c-green-b);border-color:rgba(34,197,94,.3);color:var(--c-green);}
-.help-body{overflow-y:auto;flex:1;padding:14px 16px;}
+/* v5.0-FAB — 모달 소방 규격(.fml-overlay/.fml-box/.fml-hd/.fml-tabs/.fml-bd) */
+.help-overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.65);backdrop-filter:blur(5px);animation:fadeIn .2s;}
+.help-overlay.show{display:flex;align-items:center;justify-content:center;padding:16px;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:none;opacity:1;}}
+.help-modal{background:#fff;border-radius:20px;width:100%;max-width:800px;max-height:calc(100vh - 32px);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:slideUp .25s cubic-bezier(.34,1.5,.64,1);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.7);}
+.help-modal-head{padding:18px 22px 13px;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;color:#fff;background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#15803d 100%);}
+.help-modal-title{font-size:14px;font-weight:900;letter-spacing:.04em;color:#fff;}
+.help-modal-ver{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#86efac;letter-spacing:.12em;margin-top:3px;}
+.help-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.13);border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.help-tabs{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0;background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#15803d 100%);}
+.help-tabs::-webkit-scrollbar{display:none;}
+.help-tab{padding:9px 18px;border:none;border-bottom:3px solid transparent;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;flex-shrink:0;white-space:nowrap;background:transparent;color:rgba(255,255,255,.6);font-family:inherit;color:var(--text3);}
+.help-tab.on{color:#fff;border-bottom-color:#86efac;}
+.help-tab:hover:not(.on){color:rgba(255,255,255,.88);}
+.help-body{overflow-y:auto;flex:1;padding:20px 22px 26px;-webkit-overflow-scrolling:touch;}
+.help-body::-webkit-scrollbar{width:5px;}
+.help-body::-webkit-scrollbar-thumb{background:#86efac;border-radius:3px;}
 .help-panel{display:none;}.help-panel.show{display:block;}
 .help-step{display:flex;gap:10px;margin-bottom:14px;}
 .help-step-num{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.help-step-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:3px;}
-.help-step-desc{font-size:11px;color:var(--text2);line-height:1.68;}
+.help-step-title{font-size:12px;font-weight:800;color:#1a2744;margin-bottom:3px;}
+.help-step-desc{font-size:11px;color:#475569;line-height:1.68;}
 .law-table{width:100%;border-collapse:collapse;font-size:10.5px;}
-.law-table th{background:rgba(34,197,94,.08);color:var(--text2);font-weight:700;padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;font-size:9.5px;}
-.law-table td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text2);line-height:1.5;vertical-align:top;}
+.law-table th{background:#f0fdf4;color:#15803d;font-weight:700;padding:7px 9px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:9.5px;}
+.law-table td{padding:7px 9px;border-bottom:1px solid #e2e8f0;color:#334155;line-height:1.5;vertical-align:top;}
 .law-table tr:last-child td{border-bottom:none;}
-.law-table td:first-child{color:var(--c-green);font-weight:700;font-family:var(--mono);font-size:9.5px;white-space:nowrap;}
-.warn-box{background:var(--c-amber-b);border:1px solid rgba(251,191,36,.3);border-radius:9px;padding:11px 13px;margin-top:10px;}
-.warn-box-title{font-size:10.5px;font-weight:700;color:var(--c-amber);margin-bottom:3px;}
-.warn-box-desc{font-size:10.5px;color:var(--text2);line-height:1.68;}
+.law-table td:first-child{color:#15803d;font-weight:700;font-family:var(--mono);font-size:9.5px;white-space:nowrap;}
+.warn-box{background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:11px 13px;margin-top:10px;}
+.warn-box-title{font-size:10.5px;font-weight:700;color:#b45309;margin-bottom:3px;}
+.warn-box-desc{font-size:10.5px;color:#475569;line-height:1.68;}
 
 /* LOADING */
 .loading-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
@@ -352,7 +363,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ─── touch-action: 모바일 300ms 딜레이 제거 ─── */
-.check-item,.calc-btn,.out-btn,.help-fab-triangle,.help-fab-label,.help-tab,.help-close,.a4-close-btn{touch-action:manipulation;}
+.check-item,.calc-btn,.out-btn,.help-fab,.help-tab,.help-close,.a4-close-btn{touch-action:manipulation;}
 
 /* ─── RESPONSIVE ─── */
 /* 데스크탑: 1200px+ → 기본 레이아웃 (grid 370px + 1fr) */
@@ -408,10 +419,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .a4-table{font-size:8.5px;}
   .a4-table th,.a4-table td{padding:4px 6px;}
   /* Help 모달 */
-  .help-overlay{padding:12px;}
-  .help-modal{max-height:92vh;width:95vw;}
+  .help-overlay.show{padding:0;align-items:flex-end;}
+  .help-modal{border-radius:20px 20px 0 0;max-height:92vh;}
+  .help-modal-head{padding:14px 16px 11px;}
+  .help-body{padding:16px 16px 36px;}
   /* FAB 위치 */
-  .help-fab-wrap{bottom:16px;right:16px;}
+  .help-fab-wrap{bottom:16px;right:14px;}
 }
 
 /* 소형 모바일 (≤400px) */
@@ -818,8 +831,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 <!-- HELP FAB (삼각자) -->
 <div class="help-fab-wrap" id="help-fab">
-  <div class="help-fab-triangle"><div class="help-fab-inner">📐</div></div>
-  <div class="help-fab-label">법규안내</div>
+  <button class="help-fab" type="button">
+    <span class="fab-icon">📐</span>
+    <span class="fab-lbl">이용안내</span>
+    <span class="fab-sub">법규자료</span>
+  </button>
 </div>
 
 <script>
