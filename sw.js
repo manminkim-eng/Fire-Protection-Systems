@@ -15,7 +15,9 @@
    ⛔ 이 navigate 분기를 제거하지 말 것. 제거하면 배포가 화면에 반영되지 않는다.
 ════════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'sobangsiseorak-v6.0';   /* v5.0.1 : A4 폰트 정정 · JPG 저장 시트 · PDF 인쇄 전환 · 바닥글 수정 */
+/* §17-1 (2026-09-02) — 도구 고유 접두어. 종전 `k !== CACHE_NAME` 필터는 같은 origin 의 39종 캐시를 전부 지웠다 */
+const PREFIX = 'sobangsiseorak-';
+const CACHE_NAME = 'sobangsiseorak-v6.1';   /* v5.0.1 : A4 폰트 정정 · JPG 저장 시트 · PDF 인쇄 전환 · 바닥글 수정 */
 
 /* 사전 캐시 — 존재가 확실한 것만. 개별 실패는 건너뛴다. */
 const ASSETS = [
@@ -44,7 +46,7 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME)
+        keys.filter(k => k !== CACHE_NAME && k.indexOf(PREFIX) === 0)
             .map(k => { console.log('[SW] 구버전 캐시 삭제:', k); return caches.delete(k); })
       ))
       .then(() => self.clients.claim())

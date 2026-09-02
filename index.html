@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ENGINEER KIM MANMIN · 소방시설 설치 검토 시스템 MANMIN-Ver5.1</title>
+<title>소방시설 설치 검토 시스템 · MANMIN Ver-5.1</title>
 <meta name="theme-color" content="#0a150a"/>
 <link rel="manifest" href="manifest.json"/>
 <meta name="mobile-web-app-capable" content="yes"/>
@@ -50,22 +50,40 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bg-grid{background-image:linear-gradient(rgba(34,197,94,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(34,197,94,.035) 1px,transparent 1px);background-size:40px 40px;}
 .bg-radial{background:radial-gradient(ellipse 90% 50% at 50% -8%,rgba(21,128,61,.2),transparent 65%);}
 
-.wrapper{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 20px 120px;}
+.wrapper{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:22px 20px 120px;}   /* v5.0-HDR — hero 폐지 후 상단 22px */
 
 /* ═══════════════════ HEADER ═══════════════════ */
-.header{padding:48px 0 0;text-align:center;animation:fadeDown .7s cubic-bezier(.22,.68,0,1.2) both;}
-.header-brand{font-family:'Orbitron',sans-serif;font-size:clamp(18px,3.2vw,36px);font-weight:900;letter-spacing:.06em;background:linear-gradient(140deg,#86efac 0%,#22c55e 40%,#15803d 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.header-engineer{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--green3);text-transform:uppercase;margin-bottom:4px;}
-.ver-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(21,128,61,.25),rgba(34,197,94,.1));border:1px solid rgba(74,222,128,.5);border-radius:8px;padding:5px 14px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;color:#86efac;box-shadow:0 0 16px rgba(34,197,94,.15);animation:verPulse 3s ease infinite;margin-bottom:14px;}
-.ver-dot{width:6px;height:6px;border-radius:50%;background:var(--green3);animation:pulse 1.8s ease infinite;flex-shrink:0;}
-.header-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,.08);border:1px solid rgba(74,222,128,.28);border-radius:100px;padding:5px 16px 5px 12px;font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--green4);margin-bottom:14px;}
-.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green3);animation:pulse 2.2s ease infinite;flex-shrink:0;}
-.header-tagline{font-size:clamp(12px,1.6vw,15px);font-weight:700;color:var(--text2);margin-bottom:6px;}
-.header-desc{font-size:12px;color:var(--text3);line-height:1.85;max-width:620px;margin:0 auto 28px;}
-.header-line{height:1px;margin-bottom:34px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
-.law-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:34px;}
-.law-badge{font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 12px;border-radius:100px;background:var(--surface);border:1px solid var(--border);color:var(--text2);}
-.law-badge.active{background:var(--c-green-b);border-color:rgba(34,197,94,.4);color:var(--c-green);}
+/* ═══ v5.0-HDR (2026-09-02) — 소방 마스터 3단 헤더 + 탭바 + 요약 스트립. hero 헤더(375px) 폐지.
+   구조·치수·서체·간격은 01 마스터 실측(§18-1), 색은 도구 토큰 6개(녹색 계열)만. 줄높이는 px 고정(§18-3) ═══ */
+.hdr-shell{background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#15803d 100%);box-shadow:0 2px 20px rgba(21,128,61,.35);position:relative;z-index:2;}
+.app-header{background:transparent;color:#fff;}
+.header-inner{max-width:1300px;margin:0 auto;padding:20px 24px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.brand-texts{min-width:0;}
+.hdr-eyebrow{font-size:11px;font-weight:600;opacity:.7;color:#fff;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;line-height:16px;}
+.hdr-h1{font-size:26px;font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.2;margin:0;font-family:var(--font);background:none;-webkit-text-fill-color:#fff;}
+.hdr-sub{font-size:11px;margin-top:8px;color:#fff;opacity:.85;letter-spacing:.02em;line-height:17px;}
+.hdr-manmin{font-family:'Orbitron',sans-serif!important;font-weight:900;font-size:12px;color:#86efac;letter-spacing:.08em;text-shadow:0 0 8px rgba(134,239,172,.6);white-space:nowrap;display:inline-block;line-height:17px;vertical-align:top;}
+.hdr-right-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.hdr-right{text-align:right;opacity:.75;color:#fff;font-size:11px;line-height:16px;}
+.hdr-right strong{font-size:13px;font-weight:700;line-height:19px;}
+.hdr-right em{font-size:10px;color:#86efac;font-style:normal;display:block;margin-top:4px;line-height:15px;}
+@media(max-width:768px){ .hdr-right{display:none;} .hdr-right-wrap{gap:0;} }
+@media(max-width:640px){
+  .hdr-h1{font-size:18px;}
+  .header-inner{padding:20px 14px 16px;row-gap:0;}
+  .tab-bar-inner{padding:4px 14px 0;}
+}
+.tab-bar{background:transparent;overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-bar-inner{max-width:1300px;margin:0 auto;padding:4px 24px 0;display:flex;gap:4px;}
+.tb{background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:rgba(255,255,255,.75);font-family:inherit;padding:11px 16px;font-size:13px;font-weight:700;letter-spacing:.02em;line-height:19px;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.tb:hover{color:#fff;background:rgba(255,255,255,.09);}
+.tb.active{color:#fff;background:#15803d;border-bottom-color:#86efac;}
+.sum-bar-wrap{background:#0f172a;padding:10px 0;position:relative;z-index:2;}
+.sum-bar{max-width:1300px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:14px;}
+.sum-item{font-size:12px;color:#94a3b8;line-height:18px;}
+.sum-item b{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-weight:700;color:#86efac;line-height:18px;vertical-align:top;}
+@media(max-width:640px){.sum-bar{padding:0 14px;}.sum-item{font-size:11px;}}
 
 /* ═══════════════════ MAIN LAYOUT ═══════════════════ */
 .main-layout{display:grid;grid-template-columns:370px 1fr;gap:22px;align-items:start;}
@@ -341,7 +359,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* 태블릿 가로 (921px ~ 1199px): 입력 패널 sticky 유지, 너비 줄임 */
 @media(min-width:921px) and (max-width:1199px){
-  .wrapper{padding:0 16px 100px;}
+  .wrapper{padding:20px 16px 100px;}
   .main-layout{grid-template-columns:320px 1fr;gap:18px;}
   .facility-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
 }
@@ -366,8 +384,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* 모바일 (≤600px) */
 @media(max-width:600px){
-  .wrapper{padding:0 12px 90px;}
-  .header{padding:24px 0 0;}
+  .wrapper{padding:14px 12px 90px;}
   .check-group{grid-template-columns:1fr 1fr;}
   .facility-grid{grid-template-columns:1fr;}
   .result-meta{grid-template-columns:1fr 1fr;}
@@ -401,7 +418,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 @media(max-width:400px){
   .check-group{grid-template-columns:1fr;}
   .summary-row{grid-template-columns:repeat(2,1fr);}
-  .ver-badge{font-size:9.5px;padding:4px 10px;}
 }
 
 /* 캡처 전용 기하 고정 — PDF·JPG 저장 시에만 부여한다.
@@ -492,7 +508,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
      안의 .header·.main-layout 은 숨겨져도 .wrapper 자체의 padding-bottom:120px 이 남아
      A4 가 31.8mm 아래로 밀린다. 1쪽 콘텐츠가 여백선에서 46mm 지점에 시작한 원인이다.
      (A4 오버레이는 .wrapper 밖 body 직속이므로 함께 숨겨도 안전하다) */
-  .wrapper,
+  .wrapper,.hdr-shell,.sum-bar-wrap,.no-print,   /* v5.0-HDR — 헤더 쉘·스트립 인쇄 숨김(§3-2-1 동반확인) */
   .bg-layer,.header,.main-layout,.help-fab-wrap,.help-overlay,
   .pwa-banner,.a4-toolbar{display:none!important;}
 
@@ -580,26 +596,44 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div class="bg-layer bg-grid"></div>
 <div class="bg-layer bg-radial"></div>
 
-<div class="wrapper">
-  <!-- HEADER -->
-  <div class="header">
-    <div style="margin-bottom:12px;">
-      <div class="header-engineer">Engineer Kim Manmin</div>
-      <div class="header-brand">소방시설 설치 검토 시스템</div>
+<!-- ═══ v5.0-HDR : 소방 마스터 3단 헤더 + 탭바 (한 면) ═══ -->
+<div class="hdr-shell no-print">
+<header class="app-header no-print">
+  <div class="header-inner">
+    <div class="brand-texts">
+      <div class="hdr-eyebrow">Fire Protection Review · 소방시설법 시행령</div>
+      <h1 class="hdr-h1">소방시설 설치 검토 시스템</h1>
+      <div class="hdr-sub">
+        건축물 용도 · 규모 · 구조별 설치 소방시설 자동 산출 · ISO A4 검토서
+        <span class="hdr-manmin">MANMIN · Ver-5.1</span>
+      </div>
     </div>
-    <div style="margin-bottom:14px;"><div class="ver-badge"><span class="ver-dot"></span>MANMIN-Ver5.1</div></div>
-    <div class="header-pill"><span class="pulse-dot"></span>FIRE SAFETY SYSTEM · 2026</div>
-    <div class="header-tagline">건축물 용도 · 규모 · 구조별 설치 소방시설 자동 산출 | ISO A4 검토서 출력</div>
-    <div class="header-desc">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 2026.7.1 시행)<br/>건축물 정보 입력 후 검토 실행 → A4 미리보기 · PDF 저장 · JPG 저장</div>
-    <div class="law-badges">
-      <div class="law-badge active">시행령 별표4 (2026.07.01)</div>
-      <div class="law-badge active">별표1 소방시설 종류</div>
-      <div class="law-badge active">별표2 특정소방대상물</div>
-      <div class="law-badge active">NFTC 화재안전기준</div>
+    <div class="hdr-right-wrap">
+      <div class="hdr-right"><strong>소방시설법 시행령 별표4</strong><br/>별표1 소방시설 종류 · 별표2 대상물<br/>NFTC 화재안전기준<br/><em>[시행 2026. 7. 1.]</em></div>
     </div>
-    <div class="header-line"></div>
   </div>
+</header>
+<nav class="tab-bar no-print">
+  <div class="tab-bar-inner">
+    <button class="tb active" id="tb-input" data-go="input">① 설치 검토</button>
+    <button class="tb" id="tb-result" data-go="result">② 검토 결과</button>
+    <button class="tb" id="tb-a4" data-go="a4">③ A4 검토서 출력</button>
+  </div>
+</nav>
+</div><!-- /.hdr-shell -->
+<!-- v5.0-HDR : 요약 스트립 (헤더 3층) — 값은 하단 스크립트가 window._RD 에서 읽어 채운다 -->
+<div class="sum-bar-wrap no-print">
+  <div class="sum-bar">
+    <span class="sum-item">🏢 용도: <b id="sb-cat">—</b></span>
+    <span class="sum-item">📐 연면적: <b id="sb-area">—</b></span>
+    <span class="sum-item">🏗️ 층수: <b id="sb-fl">—</b></span>
+    <span class="sum-item">🔴 필수 설치: <b id="sb-req">—</b></span>
+    <span class="sum-item">🟡 조건부: <b id="sb-cond">—</b></span>
+    <span class="sum-item">📋 기준: <b>시행령 별표4</b></span>
+  </div>
+</div>
 
+<div class="wrapper">
   <!-- MAIN LAYOUT -->
   <div class="main-layout">
 
@@ -1452,5 +1486,25 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeA4Prev
 </script>
 
 <div id="dev-stamp">MANMIN · Ver-5.1</div>
+<script>
+/* v5.0-HDR — 탭·요약 스트립. 검토 로직은 건드리지 않는다 : 탭은 스크롤/오버레이 열기, 스트립은 window._RD 읽기만 */
+(function(){
+  function setSum(){
+    var R=window._RD||null; var f=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+    if(!R){['sb-cat','sb-area','sb-fl','sb-req','sb-cond'].forEach(function(id){f(id,'—');});return;}
+    var d=R.data||{}; f('sb-cat',R.catLabel||'—'); f('sb-area',d.totalArea?d.totalArea.toLocaleString()+' ㎡':'—');
+    f('sb-fl',(d.floorsAbove||0)+'F'+(d.floorsBelow?' / B'+d.floorsBelow:'')); f('sb-req',(R.reqCnt||0)+'종'); f('sb-cond',(R.condCnt||0)+'종');
+  }
+  var cb=document.getElementById('calc-btn'); if(cb) cb.addEventListener('click',function(){setTimeout(setSum,0);});
+  var tabs=document.querySelectorAll('.tb');
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    var go=t.getAttribute('data-go');
+    if(go==='a4'){ if(typeof openA4Preview==='function') openA4Preview(false); return; }
+    tabs.forEach(function(x){x.classList.toggle('active',x===t);});
+    var el=document.querySelector(go==='result'?'#result-panel':'.input-panel'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });});
+  setSum();
+})();
+</script>
 </body>
 </html>
