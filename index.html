@@ -604,6 +604,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 
 </style>
+<style id="mm-r1">/* R1 (2026-09-04 · 지시서 §20-1 · S10 소급) — 인쇄 PDF 하단 각인 MANMIN · Ver 비표시. 버전은 A4 푸터 [MANMIN-Ver5.0] 이 담당 */
+#dev-stamp,#dev-stamp-print,.dev-stamp{display:none!important;}
+@media print{#dev-stamp,#dev-stamp-print,.dev-stamp{display:none!important;}}</style>
 </head>
 <body>
 <div class="bg-layer bg-grid"></div>
@@ -1501,7 +1504,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeA4Prev
 })();
 </script>
 
-<div id="dev-stamp">MANMIN · Ver-5.1</div>
 <script>
 /* v5.0-HDR — 탭·요약 스트립. 검토 로직은 건드리지 않는다 : 탭은 스크롤/오버레이 열기, 스트립은 window._RD 읽기만 */
 (function(){
@@ -1522,5 +1524,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeA4Prev
   setSum();
 })();
 </script>
+<script>/* R26 (2026-09-04 · 지시서 §20-15 ③ · S10 소급) — 인쇄 중 문서 제목을 비워 PDF 머리글의 페이지 제목을 지운다. 쪽번호·URL 은 브라우저 옵션 */
+(function(){var t=null;window.addEventListener('beforeprint',function(){if(t===null){t=document.title;}document.title=' ';});window.addEventListener('afterprint',function(){if(t!==null){document.title=t;t=null;}});})();</script>
 </body>
 </html>
