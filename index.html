@@ -607,6 +607,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <style id="mm-r1">/* R1 (2026-09-04 · 지시서 §20-1 · S10 소급) — 인쇄 PDF 하단 각인 MANMIN · Ver 비표시. 버전은 A4 푸터 [MANMIN-Ver5.0] 이 담당 */
 #dev-stamp,#dev-stamp-print,.dev-stamp{display:none!important;}
 @media print{#dev-stamp,#dev-stamp-print,.dev-stamp{display:none!important;}}</style>
+<style id="mm-r24b">/* R24 ①② (2026-09-05 · S10 3-B 소급 · 지시서 §21-1 R24) — 인쇄 시 collapse 표의 우측 세로선 소실 → separate + 셀 자체 선. 화면·JPG·PDF 동일 DOM(§2②). 선색은 기존 값 유지. */
+.a4-table{border-collapse:separate;border-spacing:0;border:0;}
+.a4-table th{border:0;border-right:1px solid #d4edda;border-bottom:1px solid #d4edda;}
+.a4-table th:first-child{border-left:1px solid #d4edda;}
+.a4-table tr:first-child th{border-top:1px solid #d4edda;}
+.a4-table td{border:0;border-right:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;}
+.a4-table td:first-child{border-left:1px solid #e8e8e8;}
+.a4-table tr:first-child td{border-top:1px solid #e8e8e8;}
+</style>
 </head>
 <body>
 <div class="bg-layer bg-grid"></div>
