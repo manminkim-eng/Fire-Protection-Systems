@@ -1,4 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
+   v5.2.0 회차 2026-10-17 — 시행령 별표 4(대통령령 제36728호) 판정 엔진 전면 재작성 · 매뉴얼(/manual/ 캐시 제외) · 캐시명 v7.0
    S6 회차 2026-09-05 — R24①② 표 선 separate·mono 한글 폴백 소급 동반 캐시명 v6.5
    S3-0 회차 2026-09-04 — R27 html2canvas 클론 정화 동반 캐시명 v6.4
    S2 회차 2026-09-04 — index 소급(R1·R21·R26 등) 동반 캐시명 v6.3
@@ -34,7 +35,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_NAME = 'sobangsiseorak-v6.5';   /* v5.0.1 : A4 폰트 정정 · JPG 저장 시트 · PDF 인쇄 전환 · 바닥글 수정 */
+const CACHE_NAME = 'sobangsiseorak-v7.0';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
 
 /* 사전 캐시 — 존재가 확실한 것만. 개별 실패는 건너뛴다. */
 const ASSETS = [
@@ -74,6 +75,8 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   if (!e.request.url.startsWith('http')) return;
+  /* v5.2.0 — 사용자 매뉴얼(/manual/)은 온라인 전용 · 캐시하지 않음 */
+  if (new URL(e.request.url).pathname.indexOf('/manual/') !== -1) return;
 
   /* ══ ⛔ v5.2 핵심 ══
      HTML 문서는 Network-first.

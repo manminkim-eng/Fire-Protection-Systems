@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>소방시설 설치 검토 시스템 · MANMIN Ver-5.1</title>
+<title>소방시설 설치 검토 시스템 · MANMIN Ver-5.2</title>
 <meta name="theme-color" content="#0a150a"/>
 <link rel="manifest" href="manifest.json"/>
 <meta name="mobile-web-app-capable" content="yes"/>
@@ -106,6 +106,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .form-select-wrap{position:relative;}
 .form-select-wrap::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--green3);font-size:11px;pointer-events:none;}
 .form-input::placeholder{color:var(--text3);}
+.form-hint{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.5;}   /* v5.2.0 */
+.tb-manual{margin-left:auto;text-decoration:none;color:rgba(255,255,255,.85);}   /* v5.2.0 — 작업지시서 §4 · 소방 계산서와 같은 위치 · 모양 */
+@media print{.tb-manual{display:none!important;}}
 .input-unit{display:flex;align-items:center;gap:6px;}
 .input-unit .form-input{flex:1;}
 .input-unit-label{font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;}
@@ -630,11 +633,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <h1 class="hdr-h1">소방시설 설치 검토 시스템</h1>
       <div class="hdr-sub">
         건축물 용도 · 규모 · 구조별 설치 소방시설 자동 산출 · ISO A4 검토서
-        <span class="hdr-manmin">MANMIN · Ver-5.1</span>
+        <span class="hdr-manmin">MANMIN · Ver-5.2</span>
       </div>
     </div>
     <div class="hdr-right-wrap">
-      <div class="hdr-right"><strong>소방시설법 시행령 별표4</strong><br/>별표1 소방시설 종류 · 별표2 대상물<br/>NFTC 화재안전기준<br/><em>[시행 2026. 7. 1.]</em></div>
+      <div class="hdr-right"><strong>소방시설법 시행령 별표 4</strong><br/>대통령령 제36728호<br/>별표 1 · 2 · NFTC<br/><em>[시행 2026. 10. 2.]</em></div>
     </div>
   </div>
 </header>
@@ -643,6 +646,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <button class="tb active" id="tb-input" data-go="input">① 설치 검토</button>
     <button class="tb" id="tb-result" data-go="result">② 검토 결과</button>
     <button class="tb" id="tb-a4" data-go="a4">③ A4 검토서 출력</button>
+    <a class="tb tb-manual" id="mm-manual-btn" href="https://manminkim-eng.github.io/Fire-Protection-Systems/manual/" target="_blank" rel="noopener" title="소방시설 설치 검토 시스템 사용자 매뉴얼 (새 창)" onclick="if(navigator.onLine===false){event.preventDefault();var t=document.createElement('div');t.textContent='매뉴얼은 인터넷 연결 시 열립니다';t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:9999';document.body.appendChild(t);setTimeout(function(){t.remove();},2200);}">📘 매뉴얼</a>
   </div>
 </nav>
 </div><!-- /.hdr-shell -->
@@ -653,8 +657,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <span class="sum-item">📐 연면적: <b id="sb-area">—</b></span>
     <span class="sum-item">🏗️ 층수: <b id="sb-fl">—</b></span>
     <span class="sum-item">🔴 필수 설치: <b id="sb-req">—</b></span>
-    <span class="sum-item">🟡 조건부: <b id="sb-cond">—</b></span>
-    <span class="sum-item">📋 기준: <b>시행령 별표4</b></span>
+    <span class="sum-item">🟡 확인 필요: <b id="sb-cond">—</b></span>
+    <span class="sum-item">📋 기준: <b>시행령 별표 4 (2026. 10. 2.)</b></span>
   </div>
 </div>
 
@@ -676,7 +680,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
             <div class="form-select-wrap">
               <select class="form-select" id="bld-category">
                 <option value="">— 대분류 선택 —</option>
-                <option value="apartment">공동주택 (아파트등·연립·다세대)</option>
+                <option value="apartment">공동주택</option>
                 <option value="neighborhood">근린생활시설</option>
                 <option value="culture">문화 및 집회시설</option>
                 <option value="religion">종교시설</option>
@@ -694,13 +698,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
                 <option value="warehouse">창고시설</option>
                 <option value="hazmat">위험물 저장 및 처리 시설</option>
                 <option value="auto">항공기 및 자동차 관련 시설</option>
+                <option value="animal">동물 및 식물 관련 시설</option>
+                <option value="waste">자원순환 관련 시설</option>
                 <option value="correctional">교정 및 군사시설</option>
                 <option value="broadcast">방송통신시설</option>
                 <option value="power">발전시설</option>
+                <option value="cemetery">묘지 관련 시설</option>
+                <option value="tourist">관광 휴게시설</option>
                 <option value="funeral">장례시설</option>
-                <option value="mixed">복합건축물</option>
-                <option value="tunnel">터널</option>
+                <option value="undermall">지하가 — 지하상가</option>
+                <option value="tunnel">지하가 — 터널</option>
                 <option value="underground">지하구</option>
+                <option value="heritage">국가유산</option>
+                <option value="mixed">복합건축물</option>
               </select>
             </div>
           </div>
@@ -714,44 +724,145 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
           </div>
         </div>
         <div class="form-section">
-          <div class="form-section-title">규모 정보</div>
+          <div class="form-section-title">규모 정보 — 층수는 지상 층수(지하층 제외)</div>
           <div class="form-row">
             <label class="form-label">연면적 <span>*필수</span></label>
-            <div class="input-unit"><input type="number" class="form-input" id="total-area" placeholder="예: 3500" min="0"/><span class="input-unit-label">㎡</span></div>
+            <div class="input-unit"><input type="number" class="form-input" id="total-area" placeholder="예: 3500" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div><div class="form-hint">터널 · 지하구는 0이어도 됨</div>
           </div>
           <div class="form-row">
-            <label class="form-label">지상 층수</label>
-            <div class="input-unit"><input type="number" class="form-input" id="floors-above" placeholder="예: 10" min="1"/><span class="input-unit-label">층</span></div>
+            <label class="form-label">층수 (지상)</label>
+            <div class="input-unit"><input type="number" class="form-input" id="floors-above" placeholder="예: 12" min="0" inputmode="decimal"/><span class="input-unit-label">층</span></div>
           </div>
           <div class="form-row">
-            <label class="form-label">지하 층수</label>
-            <div class="input-unit"><input type="number" class="form-input" id="floors-below" placeholder="예: 2" min="0"/><span class="input-unit-label">층</span></div>
-          </div>
-          <div class="form-row">
-            <label class="form-label">최대 바닥면적 (단일층)</label>
-            <div class="input-unit"><input type="number" class="form-input" id="max-floor-area" placeholder="예: 800" min="0"/><span class="input-unit-label">㎡</span></div>
+            <label class="form-label">지하층 수</label>
+            <div class="input-unit"><input type="number" class="form-input" id="floors-below" placeholder="예: 2" min="0" inputmode="decimal"/><span class="input-unit-label">층</span></div>
           </div>
           <div class="form-row">
             <label class="form-label">수용인원</label>
-            <div class="input-unit"><input type="number" class="form-input" id="occupants" placeholder="예: 150" min="0"/><span class="input-unit-label">명</span></div>
+            <div class="input-unit"><input type="number" class="form-input" id="occupants" placeholder="예: 150" min="0" inputmode="decimal"/><span class="input-unit-label">명</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">해당 용도 바닥면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="use-area" placeholder="비우면 연면적" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div><div class="form-hint">판매 · 운수 · 물류 · 의료 · 노유자 · 숙박 · 근린 등 용도 부분 합계 — 비우면 연면적으로 봄</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">층별 바닥면적</div>
+          <div class="form-row">
+            <label class="form-label">바닥면적이 가장 넓은 층</label>
+            <div class="input-unit"><input type="number" class="form-input" id="max-floor-area" placeholder="예: 800" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div><div class="form-hint">자동화재속보설비(500 ㎡ 이상인 층) 판정</div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">4층 이상 층 중 가장 넓은 층</label>
+            <div class="input-unit"><input type="number" class="form-input" id="m4-area" placeholder="예: 700" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">지하층 · 무창층 중 가장 넓은 층</label>
+            <div class="input-unit"><input type="number" class="form-input" id="bm-area" placeholder="예: 900" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">지하층 바닥면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="bsum-area" placeholder="예: 1800" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">지상 1층 + 2층 바닥면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="f12-area" placeholder="예: 2400" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div><div class="form-hint">옥외소화전설비(9,000 ㎡)</div>
+          </div>
+          <div class="form-row" data-show="neighborhood retail transport hotel leisure medical welfare warehouse">
+            <label class="form-label">지하층 · 무창층에 있는 해당 용도 바닥면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="buse-area" placeholder="예: 1200" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div><div class="form-hint">제연설비 제5호 가목 3)</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">주차 · 전기 · 설비</div>
+          <div class="form-row">
+            <label class="form-label">건축물 내부 차고 · 주차 면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="pk-in" placeholder="예: 3000" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">그중 지하 차고 · 주차 면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="pk-under" placeholder="예: 3000" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">옥상 차고 · 주차 면적</label>
+            <div class="input-unit"><input type="number" class="form-input" id="pk-roof" placeholder="예: 0" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">기계식 주차 대수</label>
+            <div class="input-unit"><input type="number" class="form-input" id="mech" placeholder="예: 0" min="0" inputmode="decimal"/><span class="input-unit-label">대</span></div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">전기실 · 발전실 · 변전실 · 전산실 등 최대 바닥면적</label>
+            <div class="input-unit"><input type="number" class="form-input" id="elec" placeholder="예: 250" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div><div class="form-hint">하나의 방화구획 안 여러 실은 합산</div>
+          </div>
+          <div class="form-row" data-show="apartment">
+            <label class="form-label">세대수</label>
+            <div class="input-unit"><input type="number" class="form-input" id="hh" placeholder="예: 30" min="0" inputmode="decimal"/><span class="input-unit-label">세대</span></div><div class="form-hint">연립 · 다세대 50세대 미만은 물분무 바목 3) 제외</div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">계약전류용량</label>
+            <div class="input-unit"><input type="number" class="form-input" id="amp" placeholder="예: 200" min="0" inputmode="decimal"/><span class="input-unit-label">A</span></div><div class="form-hint">누전경보기 — 비내화 철망 마감일 때</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">용도별 추가 정보</div>
+          <div class="form-row" data-show="culture religion sports">
+            <label class="form-label">무대부 바닥면적</label>
+            <div class="input-unit"><input type="number" class="form-input" id="stage" placeholder="예: 250" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row" data-show="culture">
+            <label class="form-label">영화상영관 용도 층 바닥면적</label>
+            <div class="input-unit"><input type="number" class="form-input" id="cinema-area" placeholder="예: 800" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row" data-show="tunnel">
+            <label class="form-label">터널 길이</label>
+            <div class="input-unit"><input type="number" class="form-input" id="tun-len" placeholder="예: 1200" min="0" inputmode="decimal"/><span class="input-unit-label">m</span></div>
+          </div>
+          <div class="form-row" data-show="factory warehouse auto hazmat power waste">
+            <label class="form-label">옥내 작업장 근로자 수</label>
+            <div class="input-unit"><input type="number" class="form-input" id="workers" placeholder="예: 60" min="0" inputmode="decimal"/><span class="input-unit-label">명</span></div>
+          </div>
+          <div class="form-row" data-show="factory warehouse">
+            <label class="form-label">특수가연물 저장 · 취급량 (화재예방법 시행령 별표 2 수량의 배수)</label>
+            <div class="input-unit"><input type="number" class="form-input" id="sc" placeholder="예: 0" min="0" inputmode="decimal"/><span class="input-unit-label">배</span></div>
+          </div>
+          <div class="form-row" data-show="warehouse">
+            <label class="form-label">랙 설치 부분 바닥면적 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="rack-area" placeholder="예: 0" min="0" inputmode="decimal"/><span class="input-unit-label">㎡</span></div>
+          </div>
+          <div class="form-row" data-show="warehouse">
+            <label class="form-label">천장 · 반자 높이</label>
+            <div class="input-unit"><input type="number" class="form-input" id="ceil" placeholder="예: 8" min="0" inputmode="decimal"/><span class="input-unit-label">m</span></div>
+          </div>
+          <div class="form-row" data-show="hazmat">
+            <label class="form-label">지상 노출 가스 탱크 저장용량 합계</label>
+            <div class="input-unit"><input type="number" class="form-input" id="gas-t" placeholder="예: 0" min="0" inputmode="decimal"/><span class="input-unit-label">t</span></div>
           </div>
         </div>
         <div class="form-section">
           <div class="form-section-title">특수 조건</div>
           <div class="check-group">
-            <div class="check-item" data-key="basement"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">지하층 있음</span></div>
-            <div class="check-item" data-key="noceil"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">무창층 있음</span></div>
-            <div class="check-item" data-key="kitchen"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">주방(후드·덕트)</span></div>
-            <div class="check-item" data-key="parking"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">차고·주차장</span></div>
-            <div class="check-item" data-key="highceiling"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">고천장(10m↑)</span></div>
-            <div class="check-item" data-key="hazmat"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">특수가연물</span></div>
-            <div class="check-item" data-key="rack"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">랙식 창고</span></div>
-            <div class="check-item" data-key="wood"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">목조 구조물</span></div>
+            <div class="check-item" data-key="kitchen"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">후드 · 덕트 주방 있음</span></div>
+            <div class="check-item" data-key="mallRest" data-show="retail"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">대규모점포 입점 일반음식점</span></div>
+            <div class="check-item" data-key="canteen"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">집단급식소</span></div>
+            <div class="check-item" data-key="specialStair"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">특별피난계단 · 비상용 · 피난용 승강기 승강장</span></div>
+            <div class="check-item" data-key="corridorApt" data-show="apartment"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">갓복도형 아파트등</span></div>
+            <div class="check-item" data-key="stageLow" data-show="culture religion sports"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">무대부가 지하층 · 무창층 · 4층 이상</span></div>
+            <div class="check-item" data-key="cinemaLow" data-show="culture"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">영화상영관 층이 지하층 · 무창층</span></div>
+            <div class="check-item" data-key="nonFire" data-show="factory warehouse"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">지붕 · 외벽 불연재료 · 내화구조 아님</span></div>
+            <div class="check-item" data-key="nonCombMat" data-show="factory warehouse"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">모래 · 석재 등 불연재료 공장 · 창고</span></div>
+            <div class="check-item" data-key="radWater" data-show="warehouse"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">소화수 수집 · 처리설비 있음</span></div>
+            <div class="check-item" data-key="bars" data-show="medical welfare"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">창살 설치(자동 개방 구조 제외)</span></div>
+            <div class="check-item" data-key="leased" data-show="correctional"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">임차 건물의 보호시설</span></div>
+            <div class="check-item" data-key="co2"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">이산화탄소소화설비 대상(호스릴 제외)</span></div>
+            <div class="check-item" data-key="gasFac"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">가스시설 설치</span></div>
+            <div class="check-item" data-key="wireLath"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">비내화 · 철망 넣은 비불연 마감</span></div>
+            <div class="check-item" data-key="bEvac"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">지하층이 피난층 · 주출입구가 도로에 접함</span></div>
+            <div class="check-item" data-key="nhApt" data-show="apartment"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">국민주택규모 이하 아파트 대피시설 지하층</span></div>
+            <div class="check-item" data-key="mechCovered"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">기계식 주차 지붕 · 외벽 있음</span></div>
+            <div class="check-item" data-key="noMain"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">180 m 이내 75 ㎜ 상수도 배수관 없음</span></div>
+            <div class="check-item" data-key="monitor24"><input type="checkbox" tabindex="-1"/><div class="check-box">✓</div><span class="check-label">방재실 등 24시간 화재 감시 인원 근무</span></div>
           </div>
-        </div>
-        <div class="form-row" id="parking-row" style="display:none;">
-          <label class="form-label">주차 대수</label>
-          <div class="input-unit"><input type="number" class="form-input" id="parking-count" placeholder="예: 25" min="0"/><span class="input-unit-label">대</span></div>
         </div>
         <button class="calc-btn" id="calc-btn"><span style="font-size:17px;">🔥</span>소방시설 검토 실행</button>
       </div>
@@ -762,7 +873,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="empty-state" id="empty-state">
         <div class="empty-icon">🧯</div>
         <div class="empty-title">건축물 정보를 입력하세요</div>
-        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">MANMIN-Ver5.1</span></div>
+        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">MANMIN-Ver5.2</span></div>
       </div>
       <div id="result-content" style="display:none;"></div>
     </div>
@@ -776,7 +887,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="a4-toolbar" id="a4-toolbar">
       <div class="a4-toolbar-left">
         <span style="font-size:14px;">📄</span>
-        <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · MANMIN-Ver5.1</span>
+        <span class="a4-toolbar-title">ISO A4 검토서 미리보기 · MANMIN-Ver5.2</span>
       </div>
       <div class="a4-toolbar-right">
         <button class="out-btn pdf" id="a4-pdf-btn"><span class="out-btn-icon">🖨</span>인쇄 · PDF</button>
@@ -795,7 +906,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="help-modal-head">
       <div>
         <div class="help-modal-title">📐 사용방법 · 참조 법규</div>
-        <div class="help-modal-ver">MANMIN-Ver5.1</div>
+        <div class="help-modal-ver">MANMIN-Ver5.2</div>
       </div>
       <button class="help-close" id="help-close">✕</button>
     </div>
@@ -806,35 +917,39 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     </div>
     <div class="help-body">
       <div class="help-panel show" id="help-usage">
-        <div class="help-step"><div class="help-step-num">1</div><div><div class="help-step-title">건축물 용도 선택</div><div class="help-step-desc">시행령 별표2 기준으로 대분류 → 세부용도 순으로 선택합니다.</div></div></div>
-        <div class="help-step"><div class="help-step-num">2</div><div><div class="help-step-title">규모 정보 입력</div><div class="help-step-desc">연면적(필수), 층수, 최대 단일층 바닥면적, 수용인원을 입력합니다.</div></div></div>
-        <div class="help-step"><div class="help-step-num">3</div><div><div class="help-step-title">특수 조건 체크</div><div class="help-step-desc">지하층·무창층·주방·주차장·랙창고·목조 등 해당 조건을 선택합니다.</div></div></div>
-        <div class="help-step"><div class="help-step-num">4</div><div><div class="help-step-title">출력 · 저장</div><div class="help-step-desc">검토 실행 후 <strong>ISO A4 미리보기</strong> 버튼으로 검토서를 확인하고,<br/><strong>PDF 저장</strong> 또는 <strong>JPG 저장</strong>으로 파일을 내려받으세요.</div></div></div>
+        <div class="help-step"><div class="help-step-num">1</div><div><div class="help-step-title">건축물 용도 선택</div><div class="help-step-desc">시행령 별표 2 분류로 대분류 → 세부 용도를 고릅니다. 세부 용도에 따라 판정이 달라집니다(예: 노유자 생활시설 · 요양병원 · 물류터미널 · 전통시장).</div></div></div>
+        <div class="help-step"><div class="help-step-num">2</div><div><div class="help-step-title">규모 입력</div><div class="help-step-desc">연면적 · 층수(지상, 지하층 제외) · 지하층 수 · 수용인원 · 해당 용도 바닥면적 합계를 넣습니다.</div></div></div>
+        <div class="help-step"><div class="help-step-num">3</div><div><div class="help-step-title">층별 바닥면적 · 주차 · 전기</div><div class="help-step-desc">4층 이상 · 지하층 · 무창층 최대 층, 지하층 합계, 1 · 2층 합계, 차고 · 주차 면적, 전기실 면적 — 별표 4 조건 그대로입니다.</div></div></div>
+        <div class="help-step"><div class="help-step-num">4</div><div><div class="help-step-title">용도별 정보 · 특수 조건</div><div class="help-step-desc">고른 용도에 해당하는 칸만 나타납니다(무대부 · 터널 길이 · 특수가연물 · 랙 등). 해당 조건을 누르세요.</div></div></div>
+        <div class="help-step"><div class="help-step-num">5</div><div><div class="help-step-title">결과 · 출력</div><div class="help-step-desc">소방시설마다 근거 조항 · 적용 범위 · 사유가 나옵니다. 「의무」는 원문 조건 충족, 「확인」은 화재안전기준 · 행정안전부령 · 협의로 정하는 대상입니다. A4 미리보기 → PDF · JPG.</div></div></div>
         <div class="warn-box"><div class="warn-box-title">⚠ 주의사항</div><div class="warn-box-desc">본 시스템은 참고용입니다. 실제 적용 시 관할 소방서 및 소방시설관리사와 반드시 협의하시기 바랍니다.</div></div>
       </div>
       <div class="help-panel" id="help-law1">
-        <table class="law-table"><thead><tr><th>소방시설</th><th>주요 설치 기준 (별표4)</th></tr></thead><tbody>
-          <tr><td>소화기구</td><td>연면적 33㎡ 이상 모든 특정소방대상물</td></tr>
-          <tr><td>옥내소화전</td><td>연면적 3,000㎡↑ / 지하·무창층 600㎡↑ / 4층↑ 600㎡↑</td></tr>
-          <tr><td>스프링클러</td><td>6층↑ 전층 / 문화집회 100명↑ / 판매·창고 5,000㎡↑</td></tr>
-          <tr><td>간이스프링클러</td><td>연립·다세대 / 노유자 300㎡↑ / 의료 600㎡ 미만</td></tr>
-          <tr><td>자동화재탐지</td><td>아파트 전층 / 6층↑ 전층 / 근린·의료 600㎡↑</td></tr>
-          <tr><td>비상경보</td><td>연면적 400㎡↑ / 지하·무창층 150㎡↑</td></tr>
-          <tr><td>피난기구</td><td>2~10층 — 완강기·구조대·피난사다리</td></tr>
-          <tr><td>비상조명등</td><td>지하층·무창층·11층↑ / 문화집회 100명↑</td></tr>
-          <tr><td>연결살수설비</td><td>지하층 150㎡↑</td></tr>
-          <tr><td>연결송수관</td><td>5층↑ 6,000㎡↑ / 지하 3층↑ 1,000㎡↑</td></tr>
-          <tr><td>비상콘센트</td><td>11층↑ / 지하 3층↑</td></tr>
+        <table class="law-table"><thead><tr><th>소방시설</th><th>주요 설치 기준 (별표 4 요약 — 전 조항은 결과 · 매뉴얼)</th></tr></thead><tbody>
+          <tr><td>소화기구</td><td>연면적 33 ㎡ 이상 · 가스시설 · ESS · 국가유산 · 터널 · 지하구 (제1호 가목)</td></tr>
+          <tr><td>옥내소화전</td><td>연면적 3,000 ㎡ · 지하 · 무창층 또는 4층 이상 층 600 ㎡ / 근린 · 판매 · 의료 등 1,500 ㎡ · 300 ㎡ / 옥상 주차 200 ㎡ / 터널 1,000 m (다목)</td></tr>
+          <tr><td>스프링클러</td><td>층수 6층 이상 · 문화 · 종교 · 운동 100명 · 판매 · 운수 · 물류 5,000 ㎡ 또는 500명 · 의료 · 노유자 · 숙박 600 ㎡ · 창고 5,000 ㎡ · 지하 · 무창 · 4층 이상 1,000 ㎡ 층 · 랙 10 m · 1,500 ㎡ · ESS · 지하상가 1,000 ㎡ (라목)</td></tr>
+          <tr><td>간이스프링클러</td><td>연립 · 다세대 · 근린 1,000 ㎡ · 입원실 의원 · 병원 600 ㎡ 미만 · 노유자 생활시설 · 숙박 300 ~ 600 ㎡ · 복합(30호나목) 1,000 ㎡ (마목)</td></tr>
+          <tr><td>물분무등</td><td>격납고 · 주차 건축물 800 ㎡ · 내부 주차 200 ㎡ · 기계식 20대 · 전기실 등 300 ㎡ (바목)</td></tr>
+          <tr><td>옥외소화전</td><td>지상 1 · 2층 합계 9,000 ㎡ · 보물 · 국보 목조 · 특수가연물 750배 (사목)</td></tr>
+          <tr><td>자동화재탐지</td><td>아파트등 · 기숙사 · 숙박 · 층수 6층 · 근린 · 의료 600 ㎡ · 업무 · 공장 등 1,000 ㎡ · 교육 · 수련 2,000 ㎡ · 노유자 생활시설 · 노유자 400 ㎡ · 요양병원 · 전통시장 · 지하 주차 200 ㎡ (제2호 다목)</td></tr>
+          <tr><td>비상경보 · 비상방송</td><td>400 ㎡ · 지하 · 무창 150 ㎡ / 비상방송 3,500 ㎡ · 11층 · 지하 3층 (나목 · 바목)</td></tr>
+          <tr><td>피난기구</td><td>모든 층 — 피난층 · 1 · 2층(노유자 제외) · 11층 이상 제외 (제3호 가목)</td></tr>
+          <tr><td>비상조명등</td><td>지하층 포함 5층 · 3,000 ㎡이면 모든 층 · 지하 · 무창 450 ㎡ 층 · 터널 500 m (라목)</td></tr>
+          <tr><td>제연</td><td>무대부 200 ㎡ · 영화관 100명 · 지하 · 무창 용도 1,000 ㎡ · 지하상가 · 특별피난계단 · 비상용 승강기 승강장 (제5호 가목)</td></tr>
+          <tr><td>연결송수관 · 연결살수</td><td>5층 · 6,000 ㎡ / 지하 포함 7층 / 지하 3층 · 1,000 ㎡ · 지하층 150 ㎡(학교 · 국민주택 대피 700 ㎡) · 판매 등 1,000 ㎡ (나목 · 다목)</td></tr>
+          <tr><td>비상콘센트 · 무선통신</td><td>11층 이상 층 · 지하 3층 · 1,000 ㎡ / 지하층 3,000 ㎡ · 30층 이상 16층 이상 부분 · 지하상가 · 터널 500 m (라목 · 마목)</td></tr>
         </tbody></table>
       </div>
       <div class="help-panel" id="help-law2">
         <table class="law-table"><thead><tr><th>법령</th><th>내용</th></tr></thead><tbody>
-          <tr><td>법률 제18522호</td><td>소방시설 설치 및 관리에 관한 법률 (2024.12.01)</td></tr>
-          <tr><td>대통령령 [2026.7.1 시행]</td><td>소방시설 설치 및 관리에 관한 법률 시행령 (2026.07.01)</td></tr>
-          <tr><td>별표 4</td><td>설치·관리 소방시설의 종류 (제11조) ← 주요기준</td></tr>
-          <tr><td>별표 5</td><td>소방시설 설치 면제 기준 (제14조)</td></tr>
-          <tr><td>NFTC 101~203</td><td>국가화재안전기준</td></tr>
-          <tr><td>시스템 버전</td><td>MANMIN-Ver5.1 | Engineer Kim Manmin</td></tr>
+          <tr><td>법률 제18522호</td><td>소방시설 설치 및 관리에 관한 법률 (2024. 12. 1. 시행)</td></tr>
+          <tr><td>대통령령 제36728호</td><td>같은 법 시행령 — 2026. 9. 29. 공포 · 2026. 10. 2. 시행 (LawMCP 원문 대조 2026-10-17)</td></tr>
+          <tr><td>별표 2</td><td>특정소방대상물 (제5조) — 용도 분류</td></tr>
+          <tr><td>별표 4</td><td>설치 · 관리해야 하는 소방시설의 종류 (제11조) ← 판정 기준</td></tr>
+          <tr><td>별표 5 · 6</td><td>설치 면제 기준 (제14조) · 설치하지 않을 수 있는 대상 (제16조) — 별도 확인</td></tr>
+          <tr><td>NFTC</td><td>화재안전기술기준 — 설비별 세부 기준 · 「확인」 항목</td></tr>
+          <tr><td>시스템 버전</td><td>MANMIN-Ver5.2 (v5.2.0) | Engineer Kim Manmin</td></tr>
         </tbody></table>
       </div>
     </div>
@@ -851,13 +966,320 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 </div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════════
+   FPENG v5.2.0 — 소방시설 설치 및 관리에 관한 법률 시행령 [별표 4] 판정 엔진 (순수 함수)
+   근거: 대통령령 제36728호(2026. 9. 29. 공포 · 2026. 10. 2. 시행) 별표 4 <개정 2026. 9. 29.> — LawMCP 원문 대조 2026-10-17
+   화면 · A4 · 검증 도구(manual/_tools/verify_fp.py)가 이 함수 하나를 쓴다.
+   층수 = 지상 층수(건축법 시행령 제119조제1항제9호 — 지하층은 층수에 산입하지 않음). 「지하층을 포함하는 층수」는 지상 + 지하.
+   반환: [{f:소방시설, g:분류, c:조항, s:적용 범위, r:사유, t:'req'|'chk'}] — req = 원문 조건 충족(의무), chk = 화재안전기준 · 행정안전부령 · 협의로 확인할 것
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (root) {
+  'use strict';
+  function n(v) { v = +v; return isFinite(v) && v > 0 ? v : 0; }
+  function F(v) { return (+v).toLocaleString('ko-KR'); }
+  function check(D) {
+    var cat = D.cat || '', sub = D.sub || '';
+    var A = n(D.A), Fa = n(D.Fa), Fb = n(D.Fb), maxF = n(D.maxF), m4 = Fa >= 4 ? n(D.m4) : 0, bm = n(D.bm), bSum = n(D.bSum);
+    var f12 = n(D.f12), useA = n(D.useA) || A, bUse = n(D.bUse), Oc = n(D.Oc);
+    var pkIn = n(D.pkIn), pkUnder = n(D.pkUnder), pkRoof = n(D.pkRoof), mech = n(D.mech), elec = n(D.elec);
+    var stage = n(D.stage), cinemaA = n(D.cinemaA), tunL = n(D.tunL), workers = n(D.workers), sc = n(D.sc);
+    var amp = n(D.amp), gasT = n(D.gasT), hh = n(D.hh), rackA = n(D.rackA), ceil = n(D.ceil);
+    var x = function (k) { return !!D[k]; };
+    var R = [];
+    function add(f, g, c, s, r, t) { R.push({ f: f, g: g, c: c, s: s, r: r, t: t || 'req' }); }
+    var is = function () { for (var i = 0; i < arguments.length; i++) if (cat === arguments[i]) return true; return false; };
+    var sb = function () { for (var i = 0; i < arguments.length; i++) if (sub === arguments[i]) return true; return false; };
+    var gas = cat === 'hazmat' && sub === 'gas', tunnel = cat === 'tunnel', ug = cat === 'underground';
+    var barn = cat === 'animal' && sub === 'barn';
+    var aptEtc = cat === 'apartment' && sub === 'apt';
+    var rowMulti = cat === 'apartment' && sb('row', 'multi');
+    var dorm = (cat === 'apartment' && sub === 'dorm') || (cat === 'education' && sub === 'eduDorm') || (cat === 'training' && sub === 'tDorm');
+    var hotelAll = cat === 'hotel';
+    var welfareLiving = cat === 'welfare' && sub === 'wLiving';
+    var tLodge = cat === 'training' && sub === 'tLodge';
+    var hospGroup = cat === 'medical' && sb('hosp', 'nursing');
+    var psyRehab = cat === 'medical' && sb('psych', 'rehab');
+    var midwife = cat === 'neighborhood' && sub === 'midwife';
+    var logis = cat === 'warehouse' && sub === 'logis';
+    var storeNotLogis = cat === 'warehouse' && sub !== 'logis';
+    var facWh = is('factory', 'warehouse');
+    var ess = cat === 'power' && sb('ess', 'essUps');
+    var market = cat === 'retail' && sub === 'market';
+    var mall = cat === 'retail' && sub === 'mall';
+    var um = cat === 'undermall';
+    var woodTreasure = cat === 'heritage' && sub === 'woodTreasure';
+    var nationalDefense = cat === 'correctional' && sub === 'military';
+    var G1 = '소화설비', G2 = '경보설비', G3 = '피난구조설비', G4 = '소화용수설비', G5 = '소화활동설비';
+
+    /* ── 1. 소화설비 ── */
+    // 가. 소화기구
+    if (A >= 33) add('소화기구', G1, '제1호 가목 1)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 33 ㎡' + (cat === 'welfare' ? ' — 노유자 시설은 투척용 소화용구 등으로 소화기 수량의 1/2 이상 대체 가능' : ''));
+    else if (gas || ess || cat === 'heritage') add('소화기구', G1, '제1호 가목 2)', '해당 시설', '가스시설 · 전기저장시설 · 국가유산');
+    else if (tunnel) add('소화기구', G1, '제1호 가목 3)', '터널', '터널');
+    else if (ug) add('소화기구', G1, '제1호 가목 4)', '지하구', '지하구');
+    // 나. 자동소화장치 — 후드 · 덕트 주방
+    if (x('kitchen')) {
+      if (aptEtc || (cat === 'office' && sub === 'officetel')) add('주거용 주방자동소화장치', G1, '제1호 나목 1)', '모든 층의 주방', '아파트등 · 오피스텔 — 후드 · 덕트 설치 주방');
+      if (mall && x('mallRest')) add('상업용 주방자동소화장치', G1, '제1호 나목 2)가)', '해당 주방', '대규모점포 입점 일반음식점');
+      if (x('canteen')) add('상업용 주방자동소화장치', G1, '제1호 나목 2)나)', '해당 주방', '식품위생법 제2조제12호 집단급식소');
+    }
+    // 다. 옥내소화전 — 가스시설 · 지하구 · 무인변전소(원격) 제외
+    var noIndoor = gas || ug || (cat === 'office' && sub === 'substation');
+    var indoor = false;
+    if (!noIndoor) {
+      if (A >= 3000 && !tunnel) { indoor = true; add('옥내소화전설비', G1, '제1호 다목 1)가)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 3,000 ㎡'); }
+      if (bm >= 600 && !barn) { indoor = true; add('옥내소화전설비', G1, '제1호 다목 1)나)', '모든 층', '지하층 · 무창층 바닥면적 ' + F(bm) + ' ㎡ ≥ 600 ㎡'); }
+      if (m4 >= 600) { indoor = true; add('옥내소화전설비', G1, '제1호 다목 1)다)', '모든 층', '4층 이상 층 바닥면적 ' + F(m4) + ' ㎡ ≥ 600 ㎡'); }
+      var ic2 = is('neighborhood', 'retail', 'transport', 'medical', 'welfare', 'office', 'hotel', 'leisure', 'factory', 'warehouse', 'auto', 'broadcast', 'power', 'funeral', 'mixed') || nationalDefense;
+      if (!indoor && ic2) {
+        if (A >= 1500) { indoor = true; add('옥내소화전설비', G1, '제1호 다목 2)가)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 1,500 ㎡'); }
+        if (bm >= 300) { indoor = true; add('옥내소화전설비', G1, '제1호 다목 2)나)', '모든 층', '지하층 · 무창층 바닥면적 ' + F(bm) + ' ㎡ ≥ 300 ㎡'); }
+        if (m4 >= 300) { indoor = true; add('옥내소화전설비', G1, '제1호 다목 2)다)', '모든 층', '4층 이상 층 바닥면적 ' + F(m4) + ' ㎡ ≥ 300 ㎡'); }
+      }
+      if (pkRoof >= 200) add('옥내소화전설비', G1, '제1호 다목 3)', '옥상 차고 · 주차장 부분', '옥상 차고 · 주차장 ' + F(pkRoof) + ' ㎡ ≥ 200 ㎡');
+      if (tunnel && tunL >= 1000) add('옥내소화전설비', G1, '제1호 다목 4)가)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 1,000 m');
+      if (tunnel) add('옥내소화전설비', G1, '제1호 다목 4)나)', '터널', '예상교통량 · 경사도 등으로 행정안전부령이 정하는 터널이면 설치', 'chk');
+      if (!indoor && facWh && sc >= 750) add('옥내소화전설비', G1, '제1호 다목 5)', '모든 층', '특수가연물 ' + F(sc) + '배 ≥ 750배');
+    }
+    // 라. 스프링클러 — 가스시설 · 지하구 제외
+    if (!gas && !ug) {
+      if (Fa >= 6) add('스프링클러설비', G1, '제1호 라목 1)', '모든 층', '층수 ' + F(Fa) + '층 ≥ 6층 (지하층 제외) — 기존 아파트등 리모델링 · 스프링클러 없는 기존 대상물 용도변경은 단서 확인');
+      if ((dorm && cat !== 'apartment') || cat === 'mixed') { if (A >= 5000) add('스프링클러설비', G1, '제1호 라목 2)', '모든 층', (cat === 'mixed' ? '복합건축물' : '교육연구 · 수련시설 내 기숙사') + ' 연면적 ' + F(A) + ' ㎡ ≥ 5,000 ㎡'); }
+      var sp3 = (cat === 'culture' && sub !== 'zoo') || (cat === 'religion' && sub !== 'religWood') || (cat === 'sports' && sub === 'sport');
+      if (sp3) {
+        if (Oc >= 100) add('스프링클러설비', G1, '제1호 라목 3)가)', '모든 층', '수용인원 ' + F(Oc) + '명 ≥ 100명');
+        if (cat === 'culture' && sub === 'cinema' && cinemaA >= (x('cinemaLow') ? 500 : 1000)) add('스프링클러설비', G1, '제1호 라목 3)나)', '모든 층', '영화상영관 층 바닥면적 ' + F(cinemaA) + ' ㎡ ≥ ' + (x('cinemaLow') ? '500 ㎡(지하층 · 무창층)' : '1,000 ㎡'));
+        if (stage >= (x('stageLow') ? 300 : 500)) add('스프링클러설비', G1, x('stageLow') ? '제1호 라목 3)다)' : '제1호 라목 3)라)', '모든 층', '무대부 ' + F(stage) + ' ㎡ ≥ ' + (x('stageLow') ? '300 ㎡(지하층 · 무창층 · 4층 이상)' : '500 ㎡'));
+      }
+      if ((cat === 'retail' || cat === 'transport' || logis) && (useA >= 5000 || Oc >= 500)) add('스프링클러설비', G1, '제1호 라목 4)', '모든 층', '판매 · 운수 · 물류터미널 바닥면적 합계 ' + F(useA) + ' ㎡' + (useA >= 5000 ? ' ≥ 5,000 ㎡' : '') + (Oc >= 500 ? ' · 수용인원 ' + F(Oc) + '명 ≥ 500명' : ''));
+      var sp5 = midwife || (cat === 'medical' && sb('psych', 'hosp', 'nursing')) || cat === 'welfare' || tLodge || hotelAll;
+      if (sp5 && useA >= 600) add('스프링클러설비', G1, '제1호 라목 5)', '모든 층', '해당 용도 바닥면적 합계 ' + F(useA) + ' ㎡ ≥ 600 ㎡');
+      if (storeNotLogis && useA >= 5000) add('스프링클러설비', G1, '제1호 라목 6)', '모든 층', '창고시설 바닥면적 합계 ' + F(useA) + ' ㎡ ≥ 5,000 ㎡');
+      if (Math.max(bm, m4) >= 1000 && !barn) add('스프링클러설비', G1, '제1호 라목 7)', '해당 층', '지하층 · 무창층 · 4층 이상 층 바닥면적 ' + F(Math.max(bm, m4)) + ' ㎡ ≥ 1,000 ㎡');
+      var rack8 = cat === 'warehouse' && rackA >= 1500 && ceil > 10;
+      if (rack8) add('스프링클러설비', G1, '제1호 라목 8)', '모든 층', '랙식 창고 — 천장 ' + F(ceil) + ' m > 10 m · 랙 부분 ' + F(rackA) + ' ㎡ ≥ 1,500 ㎡');
+      if (facWh && sc >= 1000) add('스프링클러설비', G1, '제1호 라목 9)가)', '해당 시설', '특수가연물 ' + F(sc) + '배 ≥ 1,000배');
+      if (cat === 'warehouse' && sub === 'radwaste' && x('radWater')) add('스프링클러설비', G1, '제1호 라목 9)나)', '해당 시설', '중 · 저준위방사성폐기물 저장시설 — 소화수 수집 · 처리설비 있음');
+      if (facWh && x('nonFire')) {
+        if (logis && !(useA >= 5000 || Oc >= 500) && (useA >= 2500 || Oc >= 250)) add('스프링클러설비', G1, '제1호 라목 10)가)', '모든 층', '지붕 · 외벽 비내화 물류터미널 — ' + F(useA) + ' ㎡ ≥ 2,500 ㎡ 또는 250명');
+        if (storeNotLogis && useA < 5000 && useA >= 2500) add('스프링클러설비', G1, '제1호 라목 10)나)', '모든 층', '지붕 · 외벽 비내화 창고 — ' + F(useA) + ' ㎡ ≥ 2,500 ㎡');
+        if (Math.max(bm, m4) < 1000 && Math.max(bm, m4) >= 500) add('스프링클러설비', G1, '제1호 라목 10)다)', '모든 층', '지붕 · 외벽 비내화 공장 · 창고 — 지하 · 무창 · 4층 이상 층 ' + F(Math.max(bm, m4)) + ' ㎡ ≥ 500 ㎡');
+        if (cat === 'warehouse' && rackA > 0 && !rack8 && useA >= 750) add('스프링클러설비', G1, '제1호 라목 10)라)', '모든 층', '지붕 · 외벽 비내화 랙식 창고 — 바닥면적 합계 ' + F(useA) + ' ㎡ ≥ 750 ㎡');
+        if (sc >= 500 && sc < 1000) add('스프링클러설비', G1, '제1호 라목 10)마)', '해당 시설', '지붕 · 외벽 비내화 — 특수가연물 ' + F(sc) + '배 ≥ 500배');
+      }
+      if (cat === 'correctional' && sub === 'prison') add('스프링클러설비', G1, '제1호 라목 11)가)', '수용거실', '보호감호소 · 교도소 · 구치소 · 보호관찰소 · 갱생보호 · 치료감호 · 소년원 · 소년분류심사원');
+      if (cat === 'correctional' && sub === 'immig' && !x('leased')) add('스프링클러설비', G1, '제1호 라목 11)나)', '보호시설 부분', '출입국관리법 제52조제2항 보호시설(외국인보호소는 생활공간)');
+      if (cat === 'correctional' && sub === 'lockup') add('스프링클러설비', G1, '제1호 라목 11)다)', '유치장', '경찰관 직무집행법 제9조 · 중대범죄수사청법 제46조제1항 유치장');
+      if (um && A >= 1000) add('스프링클러설비', G1, '제1호 라목 12)', '모든 층', '지하상가 연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
+      if (ess) add('스프링클러설비', G1, '제1호 라목 13)', '해당 시설', '발전시설 중 전기저장시설');
+    }
+    // 마. 간이스프링클러
+    if (rowMulti) add('간이스프링클러설비', G1, '제1호 마목 1)', '모든 층', '연립주택 · 다세대주택 — 주택전용 간이스프링클러설비');
+    if (cat === 'neighborhood') {
+      if (useA >= 1000) add('간이스프링클러설비', G1, '제1호 마목 2)가)', '모든 층', '근린생활시설 부분 바닥면적 합계 ' + F(useA) + ' ㎡ ≥ 1,000 ㎡');
+      if (sub === 'clinicIn') add('간이스프링클러설비', G1, '제1호 마목 2)나)', '해당 시설', '의원 · 치과의원 · 한의원 — 입원실 또는 인공신장실');
+      if (midwife && A < 600) add('간이스프링클러설비', G1, '제1호 마목 2)다)', '해당 시설', '조산원 · 산후조리원 연면적 ' + F(A) + ' ㎡ < 600 ㎡');
+    }
+    if (hospGroup && useA < 600) add('간이스프링클러설비', G1, '제1호 마목 3)가)', '해당 시설', '병원 · 요양병원 바닥면적 합계 ' + F(useA) + ' ㎡ < 600 ㎡');
+    if (psyRehab && useA >= 300 && useA < 600) add('간이스프링클러설비', G1, '제1호 마목 3)나)', '해당 시설', '정신의료기관 · 의료재활시설 ' + F(useA) + ' ㎡ (300 이상 600 미만)');
+    if (psyRehab && useA < 300 && x('bars')) add('간이스프링클러설비', G1, '제1호 마목 3)다)', '해당 시설', '정신의료기관 · 의료재활시설 300 ㎡ 미만 · 창살 설치');
+    if (cat === 'education' && sub === 'eduCamp' && A >= 100) add('간이스프링클러설비', G1, '제1호 마목 4)', '모든 층', '교육연구시설 내 합숙소 연면적 ' + F(A) + ' ㎡ ≥ 100 ㎡');
+    if (welfareLiving) add('간이스프링클러설비', G1, '제1호 마목 5)가)', '해당 시설', '노유자 생활시설(단독 · 공동주택 내 일부 시설 제외)');
+    if (cat === 'welfare' && !welfareLiving && useA >= 300 && useA < 600) add('간이스프링클러설비', G1, '제1호 마목 5)나)', '해당 시설', '노유자 시설 ' + F(useA) + ' ㎡ (300 이상 600 미만)');
+    if (cat === 'welfare' && !welfareLiving && useA < 300 && x('bars')) add('간이스프링클러설비', G1, '제1호 마목 5)다)', '해당 시설', '노유자 시설 300 ㎡ 미만 · 창살 설치');
+    if (hotelAll && useA >= 300 && useA < 600) add('간이스프링클러설비', G1, '제1호 마목 6)', '해당 시설', '숙박시설 바닥면적 합계 ' + F(useA) + ' ㎡ (300 이상 600 미만)');
+    if (cat === 'correctional' && sub === 'immig' && x('leased')) add('간이스프링클러설비', G1, '제1호 마목 7)', '보호시설 부분', '건물을 임차한 출입국관리법 보호시설');
+    if (cat === 'mixed' && sub === 'mixB' && A >= 1000) add('간이스프링클러설비', G1, '제1호 마목 8)', '모든 층', '복합건축물(별표 2 제30호나목) 연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
+    // 바. 물분무등 — 가스시설 · ESS 중 UPS · 지하구 제외
+    if (!gas && !ug && !(cat === 'power' && sub === 'essUps')) {
+      if (cat === 'auto' && sub === 'hangar') add('물분무등소화설비', G1, '제1호 바목 1)', '해당 시설', '항공기 격납고');
+      if (cat === 'auto' && sub === 'garage' && A >= 800) add('물분무등소화설비', G1, '제1호 바목 2)', '해당 시설', '차고 · 주차용 건축물 · 철골 조립식 주차시설 연면적 ' + F(A) + ' ㎡ ≥ 800 ㎡');
+      if (pkIn >= 200 && !(rowMulti && hh > 0 && hh < 50)) add('물분무등소화설비', G1, '제1호 바목 3)', '차고 · 주차장 부분', '건축물 내부 차고 · 주차 면적 합계 ' + F(pkIn) + ' ㎡ ≥ 200 ㎡');
+      if (mech >= 20) add('물분무등소화설비', G1, '제1호 바목 4)', '해당 시설', '기계식 주차시설 ' + F(mech) + '대 ≥ 20대');
+      if (elec >= 300) add('물분무등소화설비', G1, '제1호 바목 5)', '전기실 등', '전기실 · 발전실 · 변전실 · 축전지실 · 통신기기실 · 전산실 ' + F(elec) + ' ㎡ ≥ 300 ㎡ (가연성 절연유 미사용 기기 · 상주 주조정실 단서 확인)');
+      if (cat === 'warehouse' && sub === 'radwaste' && !x('radWater')) add('물분무등소화설비', G1, '제1호 바목 6)', '해당 시설', '중 · 저준위방사성폐기물 저장시설(소화수 처리설비 없음) — 이산화탄소 · 할론 · 할로겐화합물 및 불활성기체 소화설비');
+      if (tunnel) add('물분무등소화설비', G1, '제1호 바목 7)', '터널', '행정안전부령이 정하는 터널이면 물분무소화설비', 'chk');
+      if (cat === 'heritage') add('물분무등소화설비', G1, '제1호 바목 8)', '해당 시설', '지정문화유산 · 천연기념물등 중 소방청장이 국가유산청장과 협의하여 정하는 것', 'chk');
+    }
+    // 사. 옥외소화전 — 아파트등 · 가스시설 · 지하구 · 터널 제외
+    if (!aptEtc && !gas && !ug && !tunnel) {
+      if (f12 >= 9000) add('옥외소화전설비', G1, '제1호 사목 1)', '해당 대상물', '지상 1층 · 2층 바닥면적 합계 ' + F(f12) + ' ㎡ ≥ 9,000 ㎡ (같은 구내 연소 우려 구조는 하나로 봄)');
+      if (woodTreasure) add('옥외소화전설비', G1, '제1호 사목 2)', '해당 대상물', '보물 · 국보로 지정된 목조건축물');
+      if (f12 < 9000 && facWh && sc >= 750) add('옥외소화전설비', G1, '제1호 사목 3)', '해당 대상물', '공장 · 창고 특수가연물 ' + F(sc) + '배 ≥ 750배');
+    }
+
+    /* ── 2. 경보설비 ── */
+    // 가. 단독경보형 감지기
+    if (cat === 'education' && sb('eduDorm', 'eduCamp') && A < 2000) add('단독경보형 감지기', G2, '제2호 가목 1)', '해당 시설', '교육연구시설 내 기숙사 · 합숙소 연면적 ' + F(A) + ' ㎡ < 2,000 ㎡');
+    if (cat === 'training' && sub === 'tDorm' && A < 2000) add('단독경보형 감지기', G2, '제2호 가목 2)', '해당 시설', '수련시설 내 기숙사 · 합숙소 연면적 ' + F(A) + ' ㎡ < 2,000 ㎡');
+    if (tLodge && Oc < 100) add('단독경보형 감지기', G2, '제2호 가목 3)', '해당 시설', '숙박시설이 있는 수련시설(수용인원 100명 미만 — 다목 7) 비해당)');
+    if (cat === 'education' && sub === 'kinder' && A < 400) add('단독경보형 감지기', G2, '제2호 가목 4)', '해당 시설', '유치원 연면적 ' + F(A) + ' ㎡ < 400 ㎡');
+    if (rowMulti) add('단독경보형 감지기', G2, '제2호 가목 5)', '각 세대', '연립주택 · 다세대주택 — 연동형');
+    if (pkUnder > 0 && pkUnder < 200) add('단독경보형 감지기', G2, '제2호 가목 6)', '지하 차고 · 주차장 부분', '지하 차고 · 주차 면적 ' + F(pkUnder) + ' ㎡ < 200 ㎡');
+    // 나. 비상경보설비 — 불연재료 공장 · 창고 · 가스시설 · 축사 등 · 지하구 제외
+    var noAlarm = (facWh && x('nonCombMat')) || gas || barn || ug;
+    if (!noAlarm) {
+      if (A >= 400) add('비상경보설비', G2, '제2호 나목 1)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 400 ㎡');
+      var lim = cat === 'culture' && sub === 'perf' ? 100 : 150;
+      if (bm >= lim) add('비상경보설비', G2, '제2호 나목 2)', '모든 층', '지하층 · 무창층 바닥면적 ' + F(bm) + ' ㎡ ≥ ' + lim + ' ㎡' + (lim === 100 ? '(공연장)' : ''));
+      if (tunnel && tunL >= 500) add('비상경보설비', G2, '제2호 나목 3)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 500 m');
+      if (workers >= 50) add('비상경보설비', G2, '제2호 나목 4)', '옥내 작업장', '근로자 ' + F(workers) + '명 ≥ 50명 옥내 작업장');
+      if (pkUnder > 0 && pkUnder < 200) add('비상경보설비', G2, '제2호 나목 5)', '모든 층', '지하 차고 · 주차 면적 ' + F(pkUnder) + ' ㎡ < 200 ㎡');
+    }
+    // 다. 자동화재탐지설비
+    var afd = [];
+    function A_(c, s, r) { afd.push(c); add('자동화재탐지설비', G2, c, s, r); }
+    if (aptEtc || (cat === 'apartment' && sub === 'dorm') || hotelAll) A_('제2호 다목 1)', '모든 층', '공동주택 중 아파트등 · 기숙사 · 숙박시설');
+    if (Fa >= 6) A_('제2호 다목 2)', '모든 층', '층수 ' + F(Fa) + '층 ≥ 6층 (지하층 제외)');
+    var a3 = (cat === 'neighborhood' && sub !== 'bath') || (cat === 'medical' && !sb('psych', 'nursing')) || is('leisure', 'funeral', 'mixed');
+    if (a3 && A >= 600) A_('제2호 다목 3)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 600 ㎡');
+    var a4 = (cat === 'neighborhood' && sub === 'bath') || is('culture', 'religion', 'retail', 'transport', 'sports', 'office', 'factory', 'warehouse', 'hazmat', 'auto', 'broadcast', 'power', 'tourist', 'undermall') || nationalDefense;
+    if (a4 && A >= 1000) A_('제2호 다목 4)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
+    var a5 = cat === 'education' || (cat === 'training' && !tLodge) || (cat === 'animal' && sub !== 'openAn' && sub !== 'barn') || cat === 'waste' || (cat === 'correctional' && !nationalDefense) || cat === 'cemetery';
+    if (a5 && A >= 2000) A_('제2호 다목 5)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 2,000 ㎡');
+    if (welfareLiving) A_('제2호 다목 6)', '모든 층', '노유자 생활시설');
+    if ((cat === 'welfare' && !welfareLiving && A >= 400) || (tLodge && Oc >= 100)) A_('제2호 다목 7)', '모든 층', cat === 'welfare' ? '노유자 시설 연면적 ' + F(A) + ' ㎡ ≥ 400 ㎡' : '숙박시설이 있는 수련시설 수용인원 ' + F(Oc) + '명 ≥ 100명');
+    if (cat === 'medical' && sub === 'nursing') A_('제2호 다목 8)가)', '모든 층', '요양병원');
+    if (psyRehab && useA >= 300) A_('제2호 다목 8)나)', '모든 층', '정신의료기관 · 의료재활시설 ' + F(useA) + ' ㎡ ≥ 300 ㎡');
+    if (psyRehab && useA < 300 && x('bars')) A_('제2호 다목 8)다)', '모든 층', '정신의료기관 · 의료재활시설 300 ㎡ 미만 · 창살 설치');
+    if (market) A_('제2호 다목 9)', '모든 층', '판매시설 중 전통시장');
+    if (tunnel && tunL >= 1000) A_('제2호 다목 10)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 1,000 m');
+    if (ug) A_('제2호 다목 11)', '지하구', '지하구');
+    if (midwife && A < 600) A_('제2호 다목 12)', '모든 층', '조산원 · 산후조리원(다목 3) 비해당)');
+    if (facWh && sc >= 500 && !(A >= 1000)) A_('제2호 다목 13)', '모든 층', '특수가연물 ' + F(sc) + '배 ≥ 500배');
+    if (ess && !(A >= 1000)) A_('제2호 다목 14)', '모든 층', '발전시설 중 전기저장시설');
+    if (pkUnder >= 200) A_('제2호 다목 15)', '모든 층', '지하 차고 · 주차 면적 ' + F(pkUnder) + ' ㎡ ≥ 200 ㎡');
+    // 라. 시각경보기 — 자동화재탐지설비 대상 중
+    if (afd.length) {
+      var v = is('neighborhood', 'culture', 'religion', 'retail', 'transport', 'medical', 'welfare', 'sports', 'office', 'hotel', 'leisure', 'power', 'funeral', 'undermall') || logis || (cat === 'education' && sub === 'library') || (cat === 'broadcast' && sub === 'station') || (cat === 'factory' && sub === 'lithium');
+      if (v) add('시각경보기', G2, '제2호 라목', '해당 대상물', '자동화재탐지설비 대상 중 라목 1) ~ 5) 용도');
+    }
+    // 마. 화재알림설비
+    if (market) add('화재알림설비', G2, '제2호 마목', '해당 시설', '판매시설 중 전통시장');
+    // 바. 비상방송설비 — 가스시설 · 축사 등 · 터널 · 지하구 제외
+    if (!gas && !barn && !tunnel && !ug) {
+      if (A >= 3500) add('비상방송설비', G2, '제2호 바목 1)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 3,500 ㎡');
+      if (Fa >= 11) add('비상방송설비', G2, '제2호 바목 2)', '모든 층', '층수 ' + F(Fa) + '층 ≥ 11층');
+      if (Fb >= 3) add('비상방송설비', G2, '제2호 바목 3)', '모든 층', '지하층 ' + F(Fb) + '개 층 ≥ 3층');
+    }
+    // 사. 자동화재속보설비 — 24시간 감시 인원 근무 시 제외 가능(단서)
+    var sok = [];
+    if (welfareLiving) sok.push(['제2호 사목 1)', '노유자 생활시설']);
+    if (cat === 'welfare' && !welfareLiving && maxF >= 500) sok.push(['제2호 사목 2)', '노유자 시설 — 바닥면적 ' + F(maxF) + ' ㎡ ≥ 500 ㎡인 층']);
+    if (tLodge && maxF >= 500) sok.push(['제2호 사목 3)', '숙박시설이 있는 수련시설 — ' + F(maxF) + ' ㎡ ≥ 500 ㎡인 층']);
+    if (woodTreasure) sok.push(['제2호 사목 4)', '보물 · 국보로 지정된 목조건축물']);
+    if (cat === 'neighborhood' && sub === 'clinicIn') sok.push(['제2호 사목 5)가)', '의원 · 치과의원 · 한의원 입원실']);
+    if (midwife) sok.push(['제2호 사목 5)나)', '조산원 · 산후조리원']);
+    if (hospGroup) sok.push(['제2호 사목 6)가)', '종합병원 · 병원 · 치과병원 · 한방병원 · 요양병원']);
+    if (psyRehab && maxF >= 500) sok.push(['제2호 사목 6)나)', '정신병원 · 의료재활시설 ' + F(maxF) + ' ㎡ ≥ 500 ㎡인 층']);
+    if (market) sok.push(['제2호 사목 7)', '판매시설 중 전통시장']);
+    sok.forEach(function (s) { add('자동화재속보설비', G2, s[0], '해당 시설', s[1] + (x('monitor24') ? ' — 방재실 등 24시간 감시 인원 근무: 설치하지 않을 수 있음(단서)' : ''), x('monitor24') ? 'chk' : 'req'); });
+    // 아. 통합감시시설
+    if (ug) add('통합감시시설', G2, '제2호 아목', '지하구', '지하구');
+    // 자. 누전경보기
+    if (amp > 100 && x('wireLath') && !gas && !tunnel && !ug) add('누전경보기', G2, '제2호 자목', '해당 대상물', '계약전류용량 ' + F(amp) + ' A > 100 A · 비내화 철망 마감');
+    // 차. 가스누설경보기
+    if (x('gasFac') && (is('culture', 'religion', 'retail', 'transport', 'medical', 'welfare', 'training', 'sports', 'hotel', 'factory', 'funeral') || logis)) add('가스누설경보기', G2, is('culture', 'religion', 'retail', 'transport', 'medical', 'welfare') ? '제2호 차목 1)' : '제2호 차목 2)', '가스시설 설치 장소', '가스시설이 설치된 차목 대상 용도');
+
+    /* ── 3. 피난구조설비 ── */
+    if (!gas && !tunnel && !ug) {
+      var fl = [];
+      if (Fb >= 1) fl.push('지하층');
+      if (cat === 'welfare' && Fa >= 2) fl.push('지상 1 · 2층(피난층이 아닌 경우)');
+      if (Fa >= 3) fl.push('지상 3층 ~ ' + Math.min(Fa, 10) + '층');
+      if (fl.length) add('피난기구', G3, '제3호 가목', fl.join(' · '), '모든 층 — 피난층 · 지상 1 · 2층' + (cat === 'welfare' ? '(노유자 시설은 피난층이 아닌 1 · 2층 포함)' : '') + ' · 11층 이상 층 제외');
+    }
+    if (cat === 'hotel' && sub === 'tourist' && Fa + Fb >= 7) add('인명구조기구', G3, '제3호 나목 1)', '관광호텔 용도 층', '방열복 · 방화복 · 인공소생기 · 공기호흡기 — 지하층 포함 ' + F((Fa + Fb)) + '층 ≥ 7층');
+    if (cat === 'medical' && sb('hosp', 'nursing', 'psych') && Fa + Fb >= 5) add('인명구조기구', G3, '제3호 나목 2)', '병원 용도 층', '방열복 · 방화복 · 공기호흡기 — 지하층 포함 ' + F((Fa + Fb)) + '층 ≥ 5층');
+    var air = [];
+    if (cat === 'culture' && sub === 'cinema' && Oc >= 100) air.push(['제3호 나목 3)가)', '영화상영관 수용인원 ' + F(Oc) + '명 ≥ 100명']);
+    if (mall) air.push(['제3호 나목 3)나)', '판매시설 중 대규모점포']);
+    if (cat === 'transport' && sub === 'subway') air.push(['제3호 나목 3)다)', '운수시설 중 지하역사']);
+    if (um) air.push(['제3호 나목 3)라)', '지하상가']);
+    if (x('co2')) air.push(['제3호 나목 3)마)', '이산화탄소소화설비(호스릴 제외) 설치 대상']);
+    air.forEach(function (a) { add('인명구조기구', G3, a[0], '해당 대상물', '공기호흡기 — ' + a[1]); });
+    if (!tunnel && !barn) add('유도등 · 유도표지', G3, '제3호 다목 1)', '모든 층', '피난구유도등 · 통로유도등 · 유도표지 — 모든 특정소방대상물(축사 사육 부분 · 터널 제외)');
+    if ((cat === 'leisure' && sub === 'club') || is('culture', 'religion', 'sports')) add('객석유도등', G3, '제3호 다목 2)', '객석', '유흥주점(무대) · 문화 및 집회 · 종교 · 운동시설');
+    if (!tunnel && !ug && !gas) add('피난유도선', G3, '제3호 다목 3)', '해당 장소', '화재안전기준(NFTC 303)에서 정하는 장소이면 설치', 'chk');
+    var noEL = (cat === 'warehouse' && sb('store', 'dock')) || gas || barn;
+    if (!noEL) {
+      var el1 = Fa + Fb >= 5 && A >= 3000;
+      if (el1) add('비상조명등', G3, '제3호 라목 1)', '모든 층', '지하층 포함 ' + F((Fa + Fb)) + '층 ≥ 5층 · 연면적 ' + F(A) + ' ㎡ ≥ 3,000 ㎡');
+      if (!el1 && bm >= 450) add('비상조명등', G3, '제3호 라목 2)', '해당 층', '지하층 · 무창층 바닥면적 ' + F(bm) + ' ㎡ ≥ 450 ㎡');
+      if (tunnel && tunL >= 500) add('비상조명등', G3, '제3호 라목 3)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 500 m');
+    }
+    if (hotelAll) add('휴대용비상조명등', G3, '제3호 마목 1)', '객실 등', '숙박시설');
+    if ((cat === 'culture' && sub === 'cinema' && Oc >= 100) || mall || (cat === 'transport' && sub === 'subway') || um) add('휴대용비상조명등', G3, '제3호 마목 2)', '해당 대상물', '영화상영관 100명 · 대규모점포 · 지하역사 · 지하상가');
+
+    /* ── 4. 소화용수설비 ── */
+    var wn = x('noMain') ? '소화수조 또는 저수조' : '상수도소화용수설비';
+    var wr = x('noMain') ? ' — 대지 경계 180 m 이내 75 ㎜ 상수도 배수관 없음(본문 단서)' : '';
+    if (A >= 5000 && !gas && !tunnel && !ug) add(wn, G4, '제4호 가목', '해당 대상물', '연면적 ' + F(A) + ' ㎡ ≥ 5,000 ㎡' + wr);
+    if (gas && gasT >= 100) add(wn, G4, '제4호 나목', '해당 시설', '가스시설 지상 노출 탱크 ' + F(gasT) + ' t ≥ 100 t' + wr);
+    if (cat === 'waste' && sub === 'wasteRec') add(wn, G4, '제4호 다목', '해당 시설', '폐기물재활용시설 · 폐기물처분시설' + wr);
+
+    /* ── 5. 소화활동설비 ── */
+    if (is('culture', 'religion', 'sports') && stage >= 200) add('제연설비', G5, '제5호 가목 1)', '무대부', '무대부 바닥면적 ' + F(stage) + ' ㎡ ≥ 200 ㎡');
+    if (cat === 'culture' && sub === 'cinema' && Oc >= 100) add('제연설비', G5, '제5호 가목 2)', '영화상영관', '수용인원 ' + F(Oc) + '명 ≥ 100명');
+    if ((is('neighborhood', 'retail', 'transport', 'hotel', 'leisure', 'medical', 'welfare') || logis) && bUse >= 1000) add('제연설비', G5, '제5호 가목 3)', '해당 부분', '지하층 · 무창층의 해당 용도 바닥면적 합계 ' + F(bUse) + ' ㎡ ≥ 1,000 ㎡');
+    if (cat === 'transport' && sb('bus', 'rail', 'subway', 'port') && bm >= 1000) add('제연설비', G5, '제5호 가목 4)', '모든 층', '대기실 · 휴게시설 — 지하층 · 무창층 ' + F(bm) + ' ㎡ ≥ 1,000 ㎡');
+    if (um && A >= 1000) add('제연설비', G5, '제5호 가목 5)', '모든 층', '지하상가 연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
+    if (tunnel) add('제연설비', G5, '제5호 가목 6)', '터널', '행정안전부령이 정하는 터널이면 설치', 'chk');
+    if (x('specialStair') && !(aptEtc && x('corridorApt'))) add('제연설비', G5, '제5호 가목 7)', '부속실 · 승강장', '특별피난계단 · 비상용 승강기 승강장 · 피난용 승강기 승강장(갓복도형 아파트등 제외) — NFTC 501A');
+    else if (!x('specialStair') && (Fa >= 11 || Fb >= 3) && !(aptEtc && x('corridorApt'))) add('제연설비', G5, '제5호 가목 7)', '부속실 · 승강장', '11층 이상 또는 지하 3층 이하 — 건축법상 특별피난계단 · 비상용 승강기 설치 대상이면 부속실 제연(NFTC 501A)', 'chk');
+    if (!gas && !ug) {
+      var c1 = Fa >= 5 && A >= 6000, c2 = !c1 && Fa + Fb >= 7, c3 = !c1 && !c2 && Fb >= 3 && bSum >= 1000;
+      if (c1) add('연결송수관설비', G5, '제5호 나목 1)', '모든 층', '층수 ' + F(Fa) + '층 ≥ 5층 · 연면적 ' + F(A) + ' ㎡ ≥ 6,000 ㎡');
+      if (c2) add('연결송수관설비', G5, '제5호 나목 2)', '모든 층', '지하층 포함 ' + F((Fa + Fb)) + '층 ≥ 7층');
+      if (c3) add('연결송수관설비', G5, '제5호 나목 3)', '모든 층', '지하 ' + F(Fb) + '층 ≥ 3층 · 지하층 합계 ' + F(bSum) + ' ㎡ ≥ 1,000 ㎡');
+      if (tunnel && tunL >= 500) add('연결송수관설비', G5, '제5호 나목 4)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 500 m');
+    }
+    if (!ug) {
+      if ((cat === 'retail' || cat === 'transport' || logis) && useA >= 1000) add('연결살수설비', G5, '제5호 다목 1)', '해당 시설', '판매 · 운수 · 물류터미널 바닥면적 합계 ' + F(useA) + ' ㎡ ≥ 1,000 ㎡');
+      var lim2 = (x('nhApt') && cat === 'apartment') || (cat === 'education' && sub === 'school') ? 700 : 150;
+      if (bSum >= lim2 && !x('bEvac')) add('연결살수설비', G5, '제5호 다목 2)', '지하층의 모든 층', '지하층 바닥면적 합계 ' + F(bSum) + ' ㎡ ≥ ' + lim2 + ' ㎡' + (lim2 === 700 ? '(국민주택규모 아파트 대피시설 · 학교 지하층)' : ''));
+      if (gas && gasT >= 30) add('연결살수설비', G5, '제5호 다목 3)', '탱크시설', '가스시설 지상 노출 탱크 ' + F(gasT) + ' t ≥ 30 t');
+      if (pkUnder > 0 && pkUnder < 200) add('연결살수설비', G5, '제5호 다목 5)', '지하 차고 · 주차장 부분', '지하 차고 · 주차 면적 ' + F(pkUnder) + ' ㎡ < 200 ㎡');
+      if (mech > 0 && mech < 20 && x('mechCovered')) add('연결살수설비', G5, '제5호 다목 6)', '해당 시설', '기계식 주차시설 ' + F(mech) + '대 < 20대 · 지붕 · 외벽 있음');
+    }
+    if (!gas && !ug) {
+      if (Fa >= 11) add('비상콘센트설비', G5, '제5호 라목 1)', '11층 이상의 층', '층수 ' + F(Fa) + '층 ≥ 11층');
+      if (Fb >= 3 && bSum >= 1000) add('비상콘센트설비', G5, '제5호 라목 2)', '지하층의 모든 층', '지하 ' + F(Fb) + '층 ≥ 3층 · 지하층 합계 ' + F(bSum) + ' ㎡ ≥ 1,000 ㎡');
+      if (tunnel && tunL >= 500) add('비상콘센트설비', G5, '제5호 라목 3)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 500 m');
+    }
+    if (!gas) {
+      if (um && A >= 1000) add('무선통신보조설비', G5, '제5호 마목 1)', '모든 층', '지하상가 연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
+      if (bSum >= 3000 || (Fb >= 3 && bSum >= 1000)) add('무선통신보조설비', G5, '제5호 마목 2)', '지하층의 모든 층', bSum >= 3000 ? '지하층 바닥면적 합계 ' + F(bSum) + ' ㎡ ≥ 3,000 ㎡' : '지하 ' + F(Fb) + '층 ≥ 3층 · 지하층 합계 ' + F(bSum) + ' ㎡ ≥ 1,000 ㎡');
+      if (tunnel && tunL >= 500) add('무선통신보조설비', G5, '제5호 마목 3)', '터널', '터널 길이 ' + F(tunL) + ' m ≥ 500 m');
+      if (ug && sub === 'common') add('무선통신보조설비', G5, '제5호 마목 4)', '공동구', '지하구 중 공동구');
+      if (Fa >= 30) add('무선통신보조설비', G5, '제5호 마목 5)', '16층 이상 부분의 모든 층', '층수 ' + F(Fa) + '층 ≥ 30층');
+    }
+    if (ug && sb('common', 'utility')) add('연소방지설비', G5, '제5호 바목', '지하구', '전력 · 통신사업용 지하구' + (sub === 'common' ? '(공동구 포함 여부는 수용 시설로 확인)' : ''));
+    return R;
+  }
+  /* 같은 소방시설의 여러 조항을 한 줄로 묶는다 (화면 · A4용) */
+  function merge(R) {
+    var o = [], k = {};
+    R.forEach(function (h) {
+      var e = k[h.f];
+      if (!e) { e = k[h.f] = { f: h.f, g: h.g, cs: [], ss: [], rs: [], t: 'chk' }; o.push(e); }
+      e.cs.push(h.c); if (e.ss.indexOf(h.s) < 0) e.ss.push(h.s); e.rs.push(h.r); if (h.t === 'req') e.t = 'req';
+    });
+    return o;
+  }
+  var api = { check: check, merge: merge, VER: '5.2.0', LAW: '대통령령 제36728호(2026. 9. 29. 공포 · 2026. 10. 2. 시행) 별표 4' };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.FPENG = api;
+})(this);
+
+</script>
+<script>
 (function(){
 'use strict';
 
 /* ─────────────────────────────────────────
    세부 용도 데이터
 ───────────────────────────────────────── */
-var SUBTYPES={apartment:['아파트등 (아파트·기숙사)','연립주택','다세대주택','오피스텔'],neighborhood:['의원·치과·한의원 (1종 입원실)','조산원·산후조리원','목욕장 (1종)','기타 1종 근린생활시설','판매·서비스업 (2종)','일반음식점·휴게음식점 (2종)','제조·수리업 (2종)','기타 2종 근린생활시설'],culture:['공연장·집회장·관람장','전시장·박람회장','동·식물원','기타 문화집회시설'],religion:['교회·성당·사찰 (목조)','교회·성당·사찰 (일반)','기타 종교시설'],retail:['백화점·대형마트 (대규모점포)','쇼핑센터·시장','기타 판매시설'],transport:['여객자동차터미널','철도·공항·항만 시설','기타 운수시설'],medical:['종합병원·병원','치과병원·한방병원','요양병원','정신의료기관','의료재활시설'],education:['초·중·고교·대학','유치원','교육원·직업훈련소','연구소','기숙사(학교 내)'],welfare:['노인생활시설 (노유자생활시설)','아동복지시설','장애인복지시설','정신질환자복지시설','노숙인복지시설','기타 노유자시설'],training:['수련시설 (숙박있음)','수련시설 (숙박없음)','유스호스텔'],sports:['실내 경기장·체육관','수영장·물놀이형 시설','기타 실내 운동시설','실외 운동시설'],office:['일반 업무시설','무인변전소','오피스텔 (업무용)','기타 업무시설'],hotel:['호텔·여관 (300㎡ 이상)','호텔·여관 (300㎡ 미만)','기타 숙박시설'],leisure:['유흥주점·단란주점','카지노·특수목욕장','기타 위락시설'],factory:['일반 공장','특수가연물 취급 공장','방사성폐기물 관련 시설'],warehouse:['일반 창고','물류터미널','랙식 창고','냉동·냉장창고'],hazmat:['주유소·판매소','가스시설','기타 위험물시설'],auto:['항공기 격납고','차고·주차용 건축물 (800㎡↑)','세차장·정비소','기타 자동차시설'],correctional:['교도소·구치소·보호감호소','보호관찰소·갱생보호시설','소년원·소년분류심사원','외국인보호소','군부대·국방시설'],broadcast:['방송국·촬영소','통신시설','전산실·데이터센터'],power:['발전소 (일반)','전기저장시설 (ESS)','기타 발전시설'],funeral:['장례식장','화장장·봉안시설'],mixed:['복합건축물 (주거+업무)','복합건축물 (상업+업무)','지하상가 포함 복합'],tunnel:['도로 터널','철도 터널'],underground:['지하구 (전기·통신)','지하구 (가스·상하수도)']};
+var SUBTYPES={"apartment": [["apt", "아파트등 (주택 5층 이상)"], ["row", "연립주택"], ["multi", "다세대주택"], ["dorm", "기숙사"]], "neighborhood": [["clinicIn", "의원 · 치과의원 · 한의원 — 입원실 또는 인공신장실 있음"], ["clinic", "의원 · 치과의원 · 한의원 — 입원실 없음"], ["midwife", "조산원 · 산후조리원"], ["bath", "목욕장"], ["etcN", "그 밖의 근린생활시설"]], "culture": [["perf", "공연장"], ["hall", "집회장 · 관람장"], ["exhib", "전시장"], ["zoo", "동 · 식물원"], ["cinema", "영화상영관"]], "religion": [["relig", "종교시설"], ["religWood", "종교시설 — 주요구조부 목조"]], "retail": [["mall", "대규모점포"], ["market", "전통시장"], ["etcR", "그 밖의 판매시설"]], "transport": [["bus", "여객자동차터미널 · 시외버스정류장"], ["rail", "철도 · 도시철도 시설"], ["subway", "지하역사"], ["port", "공항 · 항만시설"], ["etcT", "그 밖의 운수시설"]], "medical": [["hosp", "종합병원 · 병원 · 치과병원 · 한방병원"], ["nursing", "요양병원"], ["psych", "정신의료기관"], ["rehab", "의료재활시설"]], "education": [["school", "학교"], ["kinder", "유치원"], ["library", "도서관"], ["research", "교육원 · 연구소 등"], ["eduDorm", "교육연구시설 내 기숙사"], ["eduCamp", "교육연구시설 내 합숙소"]], "welfare": [["wLiving", "노유자 생활시설"], ["wEtc", "그 밖의 노유자 시설"]], "training": [["tLodge", "숙박시설이 있는 수련시설"], ["tNo", "숙박시설이 없는 수련시설"], ["tDorm", "수련시설 내 기숙사 · 합숙소"]], "sports": [["sport", "운동시설"], ["waterpark", "물놀이형 시설"], ["sportBare", "바닥 불연재료 · 관람석 없는 운동시설"]], "office": [["off", "업무시설"], ["officetel", "오피스텔"], ["substation", "무인변전소 — 원격 조정 가능"]], "hotel": [["tourist", "관광호텔"], ["lodge", "그 밖의 숙박시설"]], "leisure": [["club", "유흥주점 — 무대 있는 카바레 · 나이트클럽 등"], ["etcL", "그 밖의 위락시설"]], "factory": [["fac", "공장"], ["lithium", "리튬1차 전지공장"]], "warehouse": [["store", "창고"], ["logis", "물류터미널"], ["dock", "하역장"], ["radwaste", "중 · 저준위방사성폐기물 저장시설"]], "hazmat": [["gas", "가스시설"], ["etcH", "그 밖의 위험물 저장 및 처리 시설"]], "auto": [["hangar", "항공기 격납고"], ["garage", "차고 · 주차용 건축물 · 철골 조립식 주차시설"], ["etcA", "그 밖의 자동차 관련 시설"]], "animal": [["barn", "축사 — 사람이 거주하지 않거나 벽이 없는 시설 · 사육 부분"], ["openAn", "기둥과 지붕만 있는 시설"], ["etcAn", "그 밖의 동물 및 식물 관련 시설"]], "waste": [["wasteRec", "폐기물재활용시설 · 폐기물처분시설"], ["etcW", "그 밖의 자원순환 관련 시설"]], "correctional": [["prison", "교정시설 · 보호관찰소 · 소년원 등"], ["immig", "외국인보호소 등 출입국관리법 보호시설"], ["lockup", "유치장"], ["military", "국방 · 군사시설"]], "broadcast": [["station", "방송국"], ["etcB", "그 밖의 방송통신시설"]], "power": [["ess", "전기저장시설"], ["essUps", "전기저장시설 중 무정전전원공급장치(UPS)"], ["etcP", "그 밖의 발전시설"]], "cemetery": [["cem", "묘지 관련 시설"]], "tourist": [["tour", "관광 휴게시설"]], "funeral": [["fun", "장례시설"]], "undermall": [["um", "지하상가"]], "tunnel": [["tun", "터널"]], "underground": [["common", "공동구"], ["utility", "전력 · 통신사업용 지하구"], ["etcU", "그 밖의 지하구"]], "heritage": [["woodTreasure", "보물 · 국보로 지정된 목조건축물"], ["heritageEtc", "그 밖의 지정문화유산 · 천연기념물등 건축물"]], "mixed": [["mixA", "복합건축물"], ["mixB", "복합건축물 — 별표 2 제30호나목(근린 · 판매 · 업무 · 숙박 · 위락 + 주택)"]]};   /* v5.2.0 — [코드, 이름] · 판정은 FPENG.check */
 
 /* ─────────────────────────────────────────
    체크박스
@@ -868,111 +1290,42 @@ document.querySelectorAll('.check-item').forEach(function(el){
   el.addEventListener('click',function(e){
     e.stopPropagation(); checks[key]=!checks[key];
     el.classList.toggle('checked',checks[key]);
-    if(key==='parking') document.getElementById('parking-row').style.display=checks[key]?'block':'none';
   });
 });
 
-/* 대분류 변경 */
+/* 대분류 변경 — 세부 용도 목록 · 용도별 입력칸 보이기 (v5.2.0) */
+function applyShow(cat){
+  document.querySelectorAll('.form-section').forEach(function(sec){var rows=sec.querySelectorAll('.form-row');if(!rows.length)return;var opt=[].every.call(rows,function(r){return r.hasAttribute('data-show');});if(opt){var any=[].some.call(rows,function(r){return r.getAttribute('data-show').split(' ').indexOf(cat)!==-1;});sec.style.display=any?'':'none';}});
+  document.querySelectorAll('[data-show]').forEach(function(el){
+    var on=el.getAttribute('data-show').split(' ').indexOf(cat)!==-1;
+    el.style.display=on?'':'none';
+    if(!on){var inp=el.querySelector('input.form-input');if(inp)inp.value='';var k=el.getAttribute('data-key');if(k&&checks[k]){checks[k]=false;el.classList.remove('checked');}}
+  });
+}
 document.getElementById('bld-category').addEventListener('change',function(){
   var cat=this.value,sub=document.getElementById('bld-subtype'),row=document.getElementById('sub-type-row');
-  sub.innerHTML='<option value="">— 세부 용도 선택 —</option>';
-  if(SUBTYPES[cat]){SUBTYPES[cat].forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;sub.appendChild(o);});row.style.display='block';}
+  sub.innerHTML='';
+  if(SUBTYPES[cat]){SUBTYPES[cat].forEach(function(s){var o=document.createElement('option');o.value=s[0];o.textContent=s[1];sub.appendChild(o);});row.style.display='block';}
   else row.style.display='none';
+  applyShow(cat);
 });
+applyShow('');
 
-/* 폼 데이터 */
+/* 폼 데이터 — FPENG.check 입력 */
 function getFormData(){
-  return{category:document.getElementById('bld-category').value,subtype:document.getElementById('bld-subtype').value,totalArea:parseFloat(document.getElementById('total-area').value)||0,floorsAbove:parseInt(document.getElementById('floors-above').value)||0,floorsBelow:parseInt(document.getElementById('floors-below').value)||0,maxFloorArea:parseFloat(document.getElementById('max-floor-area').value)||0,occupants:parseInt(document.getElementById('occupants').value)||0,parkingCount:parseInt(document.getElementById('parking-count').value)||0,hasBasement:!!checks['basement'],hasNoceil:!!checks['noceil'],hasKitchen:!!checks['kitchen'],hasParking:!!checks['parking'],hasHighceiling:!!checks['highceiling'],hasHazmat:!!checks['hazmat'],hasRack:!!checks['rack'],hasWood:!!checks['wood']};
+  var v=function(id){var e=document.getElementById(id);return e?(parseFloat(e.value)||0):0;};
+  var d={cat:document.getElementById('bld-category').value,sub:document.getElementById('bld-subtype').value,
+    A:v('total-area'),Fa:v('floors-above'),Fb:v('floors-below'),Oc:v('occupants'),useA:v('use-area'),
+    maxF:v('max-floor-area'),m4:v('m4-area'),bm:v('bm-area'),bSum:v('bsum-area'),f12:v('f12-area'),bUse:v('buse-area'),
+    pkIn:v('pk-in'),pkUnder:v('pk-under'),pkRoof:v('pk-roof'),mech:v('mech'),elec:v('elec'),hh:v('hh'),amp:v('amp'),
+    stage:v('stage'),cinemaA:v('cinema-area'),tunL:v('tun-len'),workers:v('workers'),sc:v('sc'),rackA:v('rack-area'),ceil:v('ceil'),gasT:v('gas-t')};
+  Object.keys(checks).forEach(function(k){d[k]=!!checks[k];});
+  /* 화면 · A4 표시용 별칭 */
+  d.totalArea=d.A;d.floorsAbove=d.Fa;d.floorsBelow=d.Fb;d.subtype=(function(){var o=document.getElementById('bld-subtype');return o.selectedIndex>=0&&o.options.length?o.options[o.selectedIndex].text:'';})();
+  return d;
 }
 
-/* ─────────────────────────────────────────
-   소방시설 판정 로직
-───────────────────────────────────────── */
-function checkFacilities(d){
-  var R=[],cat=d.category,sub=d.subtype,A=d.totalArea,Fa=d.floorsAbove,Fb=d.floorsBelow,Mf=d.maxFloorArea,Oc=d.occupants,Pc=d.parkingCount,TF=Fa+Fb;
-  var isApt=sub&&(sub.includes('아파트')||sub.includes('기숙사'));
-  var isOft=sub&&sub.includes('오피스텔');
-  function add(n,ic,law,reason,tags,t){R.push({name:n,icon:ic,law:law,reason:reason,tags:tags,type:t||'required'});}
-
-  /* 1.소화설비 */
-  if(A>=33||cat==='hazmat'||cat==='tunnel'||cat==='underground') add('소화기구','🧯','별표4 제1호 가목','연면적 33㎡ 이상 — 노유자시설 투척용 소화용구 1/2 대체 가능',['소화설비','의무']);
-  if(d.hasKitchen&&(isApt||isOft)) add('주거용 주방자동소화장치','🔥','별표4 제1호 나목 1)','아파트등·오피스텔 모든 층 — 후드·덕트 설치된 주방',['소화설비','의무']);
-  if(d.hasKitchen&&(cat==='retail'||cat==='neighborhood')) add('상업용 주방자동소화장치','🍳','별표4 제1호 나목 2)','판매시설 대규모점포 내 일반음식점, 집단급식소',['소화설비','주방'],'conditional');
-  var indoor=false;
-  if(!indoor&&A>=3000&&cat!=='tunnel'){indoor=true;add('옥내소화전설비','💧','별표4 제1호 다목 1)가)','연면적 3,000㎡ 이상 — 모든 층',['소화설비','의무']);}
-  if(!indoor&&d.hasBasement&&Mf>=600){indoor=true;add('옥내소화전설비','💧','별표4 제1호 다목 1)나)','지하층·무창층 바닥면적 600㎡ 이상 — 모든 층',['소화설비','의무']);}
-  if(!indoor&&Fa>=4&&Mf>=600){indoor=true;add('옥내소화전설비','💧','별표4 제1호 다목 1)다)','4층↑ 층 중 바닥면적 600㎡ 이상 — 모든 층',['소화설비','의무']);}
-  if(!indoor){var ic2=['neighborhood','retail','transport','medical','welfare','office','hotel','leisure','factory','warehouse','auto','correctional','broadcast','power','funeral','mixed'];if(ic2.indexOf(cat)!==-1){if(A>=1500)add('옥내소화전설비','💧','별표4 제1호 다목 2)가)','연면적 1,500㎡ 이상 — 모든 층',['소화설비','의무']);else if(d.hasBasement&&Mf>=300)add('옥내소화전설비','💧','별표4 제1호 다목 2)나)','지하층·무창층 300㎡ 이상 — 모든 층',['소화설비','조건부'],'conditional');else if(Fa>=4&&Mf>=300)add('옥내소화전설비','💧','별표4 제1호 다목 2)다)','4층↑ 층 중 바닥면적 300㎡ 이상 — 모든 층',['소화설비','조건부'],'conditional');}}
-  var spr=false;
-  if(!spr&&TF>=6){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 1)','층수 6층 이상 — 모든 층',['소화설비','의무']);}
-  if(!spr&&(cat==='education'||cat==='mixed')&&A>=5000){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 2)','기숙사·복합건축물 연면적 5,000㎡ 이상 — 모든 층',['소화설비','의무']);}
-  if(!spr&&cat==='culture'){if(Oc>=100){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 3)가)','문화·집회시설 수용인원 100명↑ — 모든 층',['소화설비','의무']);}else if(A>=5000){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 3)','문화·집회시설 — 기준 검토 필요',['소화설비','조건부'],'conditional');}}
-  if(!spr&&(cat==='retail'||cat==='warehouse')&&A>=5000){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 4)','판매시설·창고(물류터미널) 5,000㎡↑ — 모든 층',['소화설비','의무']);}
-  if(!spr&&(cat==='medical'||cat==='welfare'||cat==='hotel'||cat==='training')&&A>=600){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 5)','의료·노유자·숙박·수련시설 600㎡↑ — 모든 층',['소화설비','의무']);}
-  if(!spr&&cat==='warehouse'&&A>=5000){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 6)','창고시설(물류터미널 제외) 5,000㎡↑ — 모든 층',['소화설비','의무']);}
-  if(!spr&&(d.hasBasement||d.hasNoceil||Fa>=4)&&Mf>=1000){spr=true;add('스프링클러설비','🌊','별표4 제1호 라목 7)','지하·무창층 또는 4층↑ 중 바닥면적 1,000㎡↑ — 해당 층',['소화설비','의무']);}
-  if(d.hasRack&&d.hasHighceiling&&A>=1500) add('스프링클러설비(랙식)','🌊','별표4 제1호 라목 8)','랙식 창고 천장 10m↑ + 랙 바닥면적 1,500㎡↑ — 모든 층',['소화설비','의무']);
-  if(cat==='apartment'&&sub&&(sub.includes('연립')||sub.includes('다세대'))) add('간이스프링클러설비','🚿','별표4 제1호 마목 1)','연립·다세대주택 — 주택전용 간이스프링클러',['소화설비','의무']);
-  if(cat==='neighborhood'&&A>=1000) add('간이스프링클러설비','🚿','별표4 제1호 마목 2)가)','근린생활시설 1,000㎡↑ — 모든 층',['소화설비','의무']);
-  if(cat==='medical'&&A<600) add('간이스프링클러설비','🚿','별표4 제1호 마목 3)가)','병원계 의료시설 바닥면적 600㎡ 미만',['소화설비','의무']);
-  if(cat==='welfare'&&A>=300&&A<600) add('간이스프링클러설비','🚿','별표4 제1호 마목 5)나)','노유자시설 300㎡ 이상 600㎡ 미만',['소화설비','의무']);
-  if(cat==='hotel'&&A>=300&&A<600) add('간이스프링클러설비','🚿','별표4 제1호 마목 6)','숙박시설 300㎡↑ 600㎡ 미만',['소화설비','의무']);
-  if(cat==='auto'&&sub&&sub.includes('격납고')) add('물분무등소화설비','💦','별표4 제1호 바목 1)','항공기 격납고',['소화설비','의무']);
-  if(cat==='auto'&&sub&&sub.includes('주차')&&A>=800) add('물분무등소화설비','💦','별표4 제1호 바목 2)','차고·주차용 건축물 800㎡↑',['소화설비','의무']);
-  if(d.hasParking&&Mf>=200) add('물분무등소화설비','💦','별표4 제1호 바목 3)','건물 내부 차고·주차장 200㎡↑',['소화설비','조건부'],'conditional');
-  if(d.hasParking&&Pc>=20) add('물분무등소화설비','💦','별표4 제1호 바목 4)','기계식 주차시설 20대↑',['소화설비','조건부'],'conditional');
-  if(cat!=='apartment'&&cat!=='hazmat'&&cat!=='tunnel'&&cat!=='underground'){if(Mf*2>=9000||A>=9000) add('옥외소화전설비','🚒','별표4 제1호 사목 1)','지상 1·2층 바닥면적 합계 9,000㎡↑',['소화설비','조건부'],'conditional');if(d.hasWood&&sub&&sub.includes('목조')) add('옥외소화전설비','🚒','별표4 제1호 사목 2)','보물·국보 지정 목조건축물',['소화설비','의무']);}
-
-  /* 2.경보설비 */
-  if(cat==='education'&&A<2000) add('단독경보형 감지기','🔔','별표4 제2호 가목 1)','교육·수련시설 내 기숙사·합숙소 2,000㎡ 미만',['경보설비','조건부'],'conditional');
-  if(cat==='apartment'&&sub&&(sub.includes('연립')||sub.includes('다세대'))) add('단독경보형 감지기(연동형)','🔔','별표4 제2호 가목 5)','연립·다세대주택 — 연동형',['경보설비','의무']);
-  // 비상경보: 불연재료 공장·창고, 가스시설, 지하구, 터널 제외 / 터널은 길이500m↑ 별도
-  if(cat!=='underground'&&!(cat==='hazmat'&&sub&&sub.includes('가스'))){
-    if(A>=400) add('비상경보설비','🚨','별표4 제2호 나목 1)','연면적 400㎡↑ — 모든 층',['경보설비','의무']);
-    else if(d.hasBasement&&Mf>=150) add('비상경보설비','🚨','별표4 제2호 나목 2)','지하층·무창층 150㎡↑ (공연장 100㎡) — 모든 층',['경보설비','의무']);
-  }
-  if(cat==='tunnel') add('비상경보설비','🚨','별표4 제2호 나목 3)','터널 길이 500m↑',['경보설비','조건부'],'conditional');
-  var afds=false;
-  if(!afds&&(isApt||isOft||cat==='hotel')){afds=true;add('자동화재탐지설비','📡','별표4 제2호 다목 1)','아파트등·기숙사·숙박시설 — 모든 층',['경보설비','의무']);}
-  if(!afds&&TF>=6){afds=true;add('자동화재탐지설비','📡','별표4 제2호 다목 2)','6층↑ 건축물 — 모든 층',['경보설비','의무']);}
-  if(!afds){var a6=['neighborhood','medical','leisure','funeral','mixed'],a10=['culture','religion','retail','transport','sports','office','factory','warehouse','hazmat','auto','correctional','broadcast','power'];if(a6.indexOf(cat)!==-1&&A>=600){afds=true;add('자동화재탐지설비','📡','별표4 제2호 다목 3)','연면적 600㎡↑ (근린·의료·위락·장례·복합) — 모든 층',['경보설비','의무']);}else if(a10.indexOf(cat)!==-1&&A>=1000){afds=true;add('자동화재탐지설비','📡','별표4 제2호 다목 4)','연면적 1,000㎡↑ (문화·판매·업무·공장·창고 등) — 모든 층',['경보설비','의무']);}}
-  if(!afds&&(cat==='education'||cat==='training')&&A>=2000){afds=true;add('자동화재탐지설비','📡','별표4 제2호 다목 5)','교육·수련시설 2,000㎡↑ — 모든 층',['경보설비','의무']);}
-  if(!afds&&cat==='welfare'){afds=true;add('자동화재탐지설비','📡','별표4 제2호 다목 6)','노유자 생활시설 — 모든 층',['경보설비','의무']);}
-  var hasAFD=R.some(function(r){return r.name.includes('자동화재탐지');});
-  if(hasAFD){var vc=['culture','religion','transport','medical','education','welfare','training','sports','office','hotel'];if(vc.indexOf(cat)!==-1) add('시각경보기','👁','별표4 제2호 라목','자동화재탐지설비 설치 대상 — 청각장애인 시각경보장치',['경보설비','의무']);}
-  if(cat==='welfare'||cat==='medical') add('자동화재속보설비','📞','별표4 제2호 마목','노유자시설·의료시설 — 소방관서 자동 통보',['경보설비','조건부'],'conditional');
-  if(cat==='underground') add('통합감시시설','🖥','별표4 제2호 바목','지하구 — 소방시설 통합감시 및 자동제어',['경보설비','의무']);
-
-  /* 3.피난구조설비 */
-  // 피난기구: 2층~10층 (11층↑은 비상콘센트·연결송수관으로 대응)
-  if(Fa>=2&&Fa<=10&&A>=400) add('피난기구','🪜','별표4 제3호 가목','지상 2층~10층 — 완강기·구조대·피난사다리 등',['피난구조설비','의무']);
-  else if(Fa>=2&&A>=400) add('피난기구','🪜','별표4 제3호 가목','지상 2층 이상 — 완강기·구조대·피난사다리 등 (10층 이하 층 해당)',['피난구조설비','의무']);
-  if(d.hasBasement||Fa>=7) add('인명구조기구','🦺','별표4 제3호 나목','지하층·7층↑ — 방열복·공기호흡기·인명구조로프',['피난구조설비','의무']);
-  if(A>=400||TF>=2||d.hasBasement) add('유도등 및 유도표지','💡','별표4 제3호 다목','피난구·통로·계단 유도등 — 거의 모든 특정소방대상물',['피난구조설비','의무']);
-  if(d.hasBasement||d.hasNoceil||Fa>=11||(cat==='culture'&&Oc>=100)||(A>=3000&&(cat==='culture'||cat==='retail'))) add('비상조명등','🔦','별표4 제3호 라목','지하층·무창층·11층↑ / 문화집회 100명↑',['피난구조설비','의무']);
-
-  /* 4.소화용수설비 */
-  if(A>=5000) add('소화수조·저수조','🏊','별표4 제4호 가목','연면적 5,000㎡↑ — 소화수조 또는 저수조',['소화용수설비','조건부'],'conditional');
-
-  /* 5.소화활동설비 */
-  if(d.hasBasement&&Mf>=1000) add('제연설비','💨','별표4 제5호 가목 1)','지하층 바닥면적 1,000㎡↑ — 거실 제연',['소화활동설비','의무']);
-  if(cat==='culture'&&A>=1000) add('제연설비','💨','별표4 제5호 가목','문화·집회시설 1,000㎡↑ — 무대부 주변',['소화활동설비','조건부'],'conditional');
-  if(cat==='tunnel') add('제연설비','💨','별표4 제5호 가목 3)','터널 — 제연설비',['소화활동설비','의무']);
-  if(d.hasBasement&&Mf>=150) add('연결살수설비','🌀','별표4 제5호 나목','지하층 150㎡↑ — 연결살수설비',['소화활동설비','의무']);
-  if(Fa>=5&&A>=6000) add('연결송수관설비','🔗','별표4 제5호 다목 1)','5층↑ 연면적 6,000㎡↑',['소화활동설비','의무']);
-  else if(Fb>=3&&Mf>=1000) add('연결송수관설비','🔗','별표4 제5호 다목 2)','지하 3층↑ 1,000㎡↑',['소화활동설비','의무']);
-  if(cat==='tunnel') add('연결송수관설비','🔗','별표4 제5호 다목 3)','터널 — 연결송수관',['소화활동설비','의무']);
-  if(Fa>=11) add('비상콘센트설비','🔌','별표4 제5호 라목 1)','11층↑ — 소방호스 접속 비상전원',['소화활동설비','의무']);
-  if(Fb>=3&&d.hasBasement) add('비상콘센트설비','🔌','별표4 제5호 라목 2)','지하 3층↑',['소화활동설비','조건부'],'conditional');
-  if(d.hasBasement&&Mf>=3000) add('무선통신보조설비','📻','별표4 제5호 마목 1)','지하층 3,000㎡↑',['소화활동설비','의무']);
-  if(Fa>=30) add('무선통신보조설비','📻','별표4 제5호 마목 2)','지상 30층↑',['소화활동설비','의무']);
-  if(cat==='tunnel') add('무선통신보조설비','📻','별표4 제5호 마목 3)','터널 — 무선통신보조',['소화활동설비','의무']);
-  if(cat==='underground') add('연소방지설비','🛡','별표4 제5호 바목','지하구 — 연소방지도료·방화벽·방화댐퍼',['소화활동설비','의무']);
-
-  /* 중복 제거 */
-  var seen={};
-  return R.filter(function(f){if(seen[f.name])return false;seen[f.name]=true;return true;});
-}
+var ICON={'소화기구':'🧯','주거용 주방자동소화장치':'🔥','상업용 주방자동소화장치':'🍳','옥내소화전설비':'💧','스프링클러설비':'🌊','간이스프링클러설비':'🚿','물분무등소화설비':'💦','옥외소화전설비':'🚒','단독경보형 감지기':'🔔','비상경보설비':'🚨','자동화재탐지설비':'📡','시각경보기':'👁','화재알림설비':'📳','비상방송설비':'📢','자동화재속보설비':'📞','통합감시시설':'🖥','누전경보기':'⚡','가스누설경보기':'🧪','피난기구':'🪜','인명구조기구':'🦺','유도등 · 유도표지':'💡','객석유도등':'💺','피난유도선':'➰','비상조명등':'🔦','휴대용비상조명등':'🔦','상수도소화용수설비':'🚰','소화수조 또는 저수조':'🏊','제연설비':'💨','연결송수관설비':'🔗','연결살수설비':'🌀','비상콘센트설비':'🔌','무선통신보조설비':'📻','연소방지설비':'🛡'};
 
 /* ─────────────────────────────────────────
    그룹 컬러
@@ -986,18 +1339,20 @@ var GRPS=['소화설비','경보설비','피난구조설비','소화용수설비
 ───────────────────────────────────────── */
 document.getElementById('calc-btn').addEventListener('click',function(){
   var data=getFormData();
-  if(!data.category){alert('건축물 용도(대분류)를 선택해주세요.');return;}
-  if(!data.totalArea){alert('연면적을 입력해주세요.');return;}
-  var uniq=checkFacilities(data);
+  if(!data.cat){alert('건축물 용도(대분류)를 선택해주세요.');return;}
+  if(!data.A&&data.cat!=='tunnel'&&data.cat!=='underground'){alert('연면적을 입력해주세요.');return;}
+  if(data.cat==='tunnel'&&!data.tunL){alert('터널 길이를 입력해주세요.');return;}
+  var hits=FPENG.check(data), uniq=FPENG.merge(hits);
+  uniq.forEach(function(f){f.icon=ICON[f.f]||'•';f.name=f.f;f.tags=[f.g];f.type=f.t==='req'?'required':'conditional';f.law='별표 4 '+f.cs.join(' · ');f.reason=f.rs.join('<br/>');f.scope=f.ss.join(' · ');});
   var groups={};
-  GRPS.forEach(function(g){groups[g]=uniq.filter(function(f){return f.tags.indexOf(g)!==-1;});});
-  var reqCnt=uniq.filter(function(f){return f.type==='required';}).length;
-  var condCnt=uniq.filter(function(f){return f.type==='conditional';}).length;
+  GRPS.forEach(function(g){groups[g]=uniq.filter(function(f){return f.g===g;});});
+  var reqCnt=uniq.filter(function(f){return f.t==='req';}).length;
+  var condCnt=uniq.length-reqCnt;
   var sel=document.getElementById('bld-category');
   var catLabel=sel.options[sel.selectedIndex].text;
   var now=new Date();
-  var dateStr=now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  window._RD={data:data,uniq:uniq,groups:groups,reqCnt:reqCnt,condCnt:condCnt,catLabel:catLabel,dateStr:dateStr};
+  var dateStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  window._RD={data:data,uniq:uniq,hits:hits,groups:groups,reqCnt:reqCnt,condCnt:condCnt,catLabel:catLabel,dateStr:dateStr};
   renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data);
 });
 
@@ -1011,7 +1366,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
   var gc=Object.keys(groups).filter(function(k){return groups[k].length>0;}).length;
   var html='<div class="result-header">'
     +'<div class="result-title-row">'
-    +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">MANMIN-Ver5.1 · 시행령 별표4 (2026.07.01)</div></div>'
+    +'<div><div class="result-title">🔥 소방시설 검토 결과</div><div class="result-ver">MANMIN-Ver5.2 · 시행령 별표 4 · 대통령령 제36728호 (2026. 10. 2. 시행)</div></div>'
     +'<div class="output-btns">'
     +'<button class="out-btn preview" id="res-a4-btn"><span class="out-btn-icon">📄</span>A4 미리보기</button>'
     +'<button class="out-btn pdf" id="res-pdf-btn"><span class="out-btn-icon">🖨</span>인쇄 · PDF</button>'
@@ -1020,13 +1375,13 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
     +'<div class="result-meta">'
     +'<div class="meta-item"><div class="meta-label">건축물 용도</div><div class="meta-value" style="font-size:10.5px;">'+catLabel+'</div></div>'
     +'<div class="meta-item"><div class="meta-label">검토 일시</div><div class="meta-value" style="font-size:10px;font-family:var(--mono);">'+dateStr+'</div></div>'
-    +'<div class="meta-item"><div class="meta-label">적용 법령</div><div class="meta-value" style="font-size:10px;">시행령 별표4 (2026.07.01)</div></div>'
+    +'<div class="meta-item"><div class="meta-label">적용 법령</div><div class="meta-value" style="font-size:10px;">별표 4 · 제36728호 (2026. 10. 2.)</div></div>'
     +'<div class="meta-item"><div class="meta-label">규모</div><div class="meta-value" style="font-size:10px;">'+addr+'</div></div>'
     +'</div></div>'
     +'<div class="summary-row">'
     +'<div class="sum-box t-rose"><div class="sum-num">'+uniq.length+'</div><div class="sum-lbl">총 설치<br/>소방시설</div></div>'
     +'<div class="sum-box t-amber"><div class="sum-num">'+reqCnt+'</div><div class="sum-lbl">의무<br/>설치</div></div>'
-    +'<div class="sum-box t-teal"><div class="sum-num">'+condCnt+'</div><div class="sum-lbl">조건부<br/>설치</div></div>'
+    +'<div class="sum-box t-teal"><div class="sum-num">'+condCnt+'</div><div class="sum-lbl">확인<br/>필요</div></div>'
     +'<div class="sum-box t-green"><div class="sum-num">'+gc+'</div><div class="sum-lbl">해당<br/>설비분류</div></div>'
     +'</div>';
   GRPS.forEach(function(g){
@@ -1039,19 +1394,20 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
       +'</div><div class="facility-grid">';
     items.forEach(function(f){
       var tc=f.type==='required'?'status-required':'status-conditional';
-      var tl=f.type==='required'?'의무':'조건부';
+      var tl=f.type==='required'?'의무':'확인';
       html+='<div class="facility-card '+tc+'">'
         +'<div class="fc-top"><div class="fc-icon">'+f.icon+'</div>'
         +'<div><div class="fc-name">'+f.name+'</div><div class="fc-law">'+f.law+'</div></div></div>'
-        +'<div class="fc-reason">'+f.reason+'</div>'
+        +'<div class="fc-reason"><b style="color:var(--text);">범위</b> '+f.scope+'<br/>'+f.reason+'</div>'
         +'<div class="fc-tags"><span class="fc-tag main">'+tl+'</span>'
         +f.tags.slice(1).map(function(t){return'<span class="fc-tag" style="background:rgba(255,255,255,.06);color:var(--text3);">'+t+'</span>';}).join('')
         +'</div></div>';
     });
     html+='</div></div>';
   });
-  html+='<div class="result-footer">소방시설 설치 및 관리에 관한 법률 시행령 별표4 (2026.7.1) 기준 | 실제 적용 시 관할 소방서 및 소방시설관리사 협의 필요<br/>'
-    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.1</span></div>';
+  html+='<div class="fc-reason" style="margin:14px 0 0;padding:12px 14px;border:1px solid var(--border);border-radius:10px;"><b>검토 범위 밖 · 따로 확인</b> — ① 별표 5 설치 면제(예: 스프링클러 설치 시 연결살수 · 물분무 등) · 별표 6 설치 제외 ② 비고 1: 복합건축물 안 근린생활시설등은 더 강화된 기준 적용 ③ 비고 3: 내진설계 · 성능위주설계 대상 ④ 「확인」 표시는 화재안전기준 · 행정안전부령 · 협의로 정하는 대상 ⑤ 부칙 경과조치(허가 · 착공 신고 시점 기준)</div>';
+  html+='<div class="result-footer">소방시설 설치 및 관리에 관한 법률 시행령 별표 4 · 대통령령 제36728호 (2026. 10. 2. 시행) 기준 | 실제 적용 시 관할 소방서 및 소방시설관리사 협의 필요<br/>'
+    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.2</span></div>';
   rc.innerHTML=html;
   document.getElementById('res-a4-btn').addEventListener('click',function(){openA4Preview(false);});
   document.getElementById('res-pdf-btn').addEventListener('click',function(){openA4Preview('pdf');});
@@ -1063,7 +1419,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
    A4 검토서 HTML 빌드 (흰 배경, 인쇄 스타일)
 ───────────────────────────────────────── */
 function buildA4HTML(d){
-  var addr=[d.data.subtype||null,'연면적 '+d.data.totalArea.toLocaleString()+'㎡',d.data.floorsAbove?'지상 '+d.data.floorsAbove+'층':null,d.data.floorsBelow?'지하 '+d.data.floorsBelow+'층':null,d.data.maxFloorArea?'최대층 '+d.data.maxFloorArea+'㎡':null,d.data.occupants?'수용 '+d.data.occupants+'명':null].filter(Boolean);
+  var addr=[d.data.subtype||null,'연면적 '+d.data.totalArea.toLocaleString()+'㎡',d.data.floorsAbove?'지상 '+d.data.floorsAbove+'층':null,d.data.floorsBelow?'지하 '+d.data.floorsBelow+'층':null,d.data.maxF?'최대층 '+d.data.maxF+'㎡':null,d.data.Oc?'수용 '+d.data.Oc+'명':null].filter(Boolean);
   var gc=Object.keys(d.groups).filter(function(k){return d.groups[k].length>0;}).length;
   var grpNums={'소화설비':'1.','경보설비':'2.','피난구조설비':'3.','소화용수설비':'4.','소화활동설비':'5.'};
 
@@ -1086,15 +1442,15 @@ function buildA4HTML(d){
       +'<span class="a4-sec-count">'+items.length+'종</span>'
       +'</div>'
       +'<table class="a4-table">'
-      +'<thead><tr><th style="width:130px;">소방시설명</th><th style="width:55px;text-align:center;">구분</th><th style="width:120px;">근거 조문</th><th>설치 기준 및 이유</th></tr></thead><tbody>';
+      +'<thead><tr><th style="width:128px;">소방시설명</th><th style="width:44px;text-align:center;">구분</th><th style="width:118px;">근거 조문 (별표 4)</th><th>적용 범위 · 사유</th></tr></thead><tbody>';
     items.forEach(function(f){
-      var tl=f.type==='required'?'의무':'조건부';
+      var tl=f.type==='required'?'의무':'확인';
       var tc=f.type==='required'?'type-required':'type-conditional';
       tablesHTML+='<tr>'
         +'<td class="facility-name">'+f.icon+' '+f.name+'</td>'
         +'<td class="'+tc+'">'+tl+'</td>'
-        +'<td class="law-ref">'+f.law+'</td>'
-        +'<td>'+f.reason+'</td>'
+        +'<td class="law-ref">'+f.cs.join('<br/>')+'</td>'
+        +'<td><b>'+f.scope+'</b><br/>'+f.reason+'</td>'
         +'</tr>';
     });
     tablesHTML+='</tbody></table>';
@@ -1102,26 +1458,26 @@ function buildA4HTML(d){
 
   return '<div class="a4-doc-header">'
     +'<div><div class="a4-doc-brand">Engineer Kim Manmin · Fire Safety System</div>'
-    +'<div class="a4-doc-ver">MANMIN-Ver5.1 · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 적용</div>'
+    +'<div class="a4-doc-ver">MANMIN-Ver5.2 · 소방시설 설치 및 관리에 관한 법률 시행령 별표 4 적용</div>'
     +'<div class="a4-doc-title">소방시설 설치 검토서</div>'
     +'<div class="a4-doc-sub">Fire Safety Facility Installation Review Report</div></div>'
-    +'<div class="a4-doc-date"><strong>검토서 기준</strong>시행령 별표4<br/>대통령령 [2026.7.1 시행]<br/>2026.07.01 시행<br/>'+d.dateStr+'</div>'
+    +'<div class="a4-doc-date"><strong>검토서 기준</strong>시행령 별표 4<br/>대통령령 제36728호<br/>2026. 10. 2. 시행<br/>'+d.dateStr+'</div>'
     +'</div>'
     +'<div class="a4-info-box"><div class="a4-info-grid">'+infoHTML+'</div></div>'
     +'<div class="a4-stats">'
     +'<div class="a4-stat rose"><div class="a4-stat-num">'+d.uniq.length+'</div><div class="a4-stat-label">총 설치 소방시설</div></div>'
     +'<div class="a4-stat amber"><div class="a4-stat-num">'+d.reqCnt+'</div><div class="a4-stat-label">의무 설치</div></div>'
-    +'<div class="a4-stat teal"><div class="a4-stat-num">'+d.condCnt+'</div><div class="a4-stat-label">조건부 설치</div></div>'
+    +'<div class="a4-stat teal"><div class="a4-stat-num">'+d.condCnt+'</div><div class="a4-stat-label">확인 필요</div></div>'
     +'<div class="a4-stat green"><div class="a4-stat-num">'+gc+'</div><div class="a4-stat-label">설비 분류수</div></div>'
     +'</div>'
     +tablesHTML
     +'<div class="a4-caution">'
     +'<div class="a4-caution-title">⚠ 주의사항</div>'
-    +'<div class="a4-caution-text">본 검토서는 소방시설 설치 및 관리에 관한 법률 시행령 별표4 (대통령령 2026.7.1 시행) 기준으로 자동 산출한 참고 자료입니다. 실제 소방시설 설계·시공 시에는 관할 소방서 및 소방시설관리사와 반드시 협의하시기 바랍니다. 법령 개정 시 최신 기준을 확인하세요.</div>'
+    +'<div class="a4-caution-text">본 검토서는 소방시설 설치 및 관리에 관한 법률 시행령 별표 4 · 대통령령 제36728호 (2026. 10. 2. 시행) 기준으로 자동 산출한 참고 자료입니다. 실제 설계 · 시공 시에는 관할 소방서 및 소방시설관리사와 협의하십시오.<br/>검토 범위 밖 · 따로 확인 — ① 별표 5 설치 면제(예: 스프링클러 설치 시 연결살수 · 물분무 등) · 별표 6 설치 제외 ② 비고 1: 복합건축물 안 근린생활시설등은 더 강화된 기준 적용 ③ 비고 3: 내진설계 · 성능위주설계 대상 ④ 「확인」 표시는 화재안전기준 · 행정안전부령 · 협의로 정하는 대상 ⑤ 부칙 경과조치(허가 · 착공 신고 시점 기준)</div>'
     +'</div>'
     +'<div class="a4-footer">'
-    +'<div class="a4-footer-left">ISO A4 (210mm × 297mm) · 소방시설 설치 및 관리에 관한 법률 시행령 별표4 · NFTC 화재안전기준</div>'
-    +'<div class="a4-footer-right">ENGINEER KIM MANMIN · MANMIN-Ver5.1</div>'
+    +'<div class="a4-footer-left">ISO A4 (210mm × 297mm) · 소방시설법 시행령 별표 4 · 대통령령 제36728호 (2026. 10. 2. 시행) · NFTC 화재안전기준</div>'
+    +'<div class="a4-footer-right">ENGINEER KIM MANMIN · MANMIN-Ver5.2</div>'
     +'</div>';
 }
 
@@ -1375,7 +1731,7 @@ function doSaveJPG(){
     ignoreElements:function(el){return el.classList&&el.classList.contains('a4-toolbar');}
   }).then(function(canvas){
     doneJ();
-    var base='소방시설검토서_MANMIN-Ver5.1_'+(new Date().toISOString().slice(0,10));
+    var base='소방시설검토서_MANMIN-Ver5.2_'+(new Date().toISOString().slice(0,10));
     /* v5.0.2 — 각 쪽을 A4 용지 비율(794 × 1123px · 1:1.4142) 캔버스에 얹는다(§3-5-2).
        종전에는 내용 높이만큼만 잘라 2쪽이 331px 짜리 납작한 띠로 나왔다.
        윗여백은 전 쪽에 인쇄와 같은 12mm 를 준다. 세그먼트가 padding 을 제외한
@@ -1523,7 +1879,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeA4Prev
     f('sb-fl',(d.floorsAbove||0)+'F'+(d.floorsBelow?' / B'+d.floorsBelow:'')); f('sb-req',(R.reqCnt||0)+'종'); f('sb-cond',(R.condCnt||0)+'종');
   }
   var cb=document.getElementById('calc-btn'); if(cb) cb.addEventListener('click',function(){setTimeout(setSum,0);});
-  var tabs=document.querySelectorAll('.tb');
+  var tabs=document.querySelectorAll('.tb[data-go]');
   tabs.forEach(function(t){t.addEventListener('click',function(){
     var go=t.getAttribute('data-go');
     if(go==='a4'){ if(typeof openA4Preview==='function') openA4Preview(false); return; }
