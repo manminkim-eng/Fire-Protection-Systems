@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="소방시설 설치 검토 시스템 · MANMIN Ver-5.2">
 <meta name="twitter:description" content="소방시설 설치 및 관리에 관한 법률 시행령 별표4 기준 소방시설 설치 검토 시스템 · MANMIN Ver-5.1">
 <meta name="twitter:image" content="https://manminkim-eng.github.io/Fire-Protection-Systems/og-card.jpg">
-<meta name="theme-color" content="#0a150a"/>
+<meta name="theme-color" content="#15803d"/>
 <link rel="manifest" href="manifest.json"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -35,7 +35,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png"/>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v5.1.9/dist/web/static/pretendard.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
 <link rel="stylesheet" href="./assets/fonts/manmin-fonts.css"/><!-- v5.0 로컬 폴백 폰트 — CDN 차단·오프라인 대비. CDN link 보다 먼저 로드되어야 한다 -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <!-- html2canvas: JPG 출력 -->
@@ -46,9 +46,9 @@
 <style>
 /* ═══════════════════ RESET & ROOT ═══════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
+:root{--d:#22c55e;--d-deep:#15803d;--d-lt:#86efac;--d-tint:#dcfce7;--d-rgb:34,197,94;--fs-badge:11px;--fs-cap:11.5px;--fs-sm:12.5px;--fs-desc:13px;--fs-body:14px;--fs-sec:16px;--fs-card:17px;--fs-stat:20px;
   --font:'Pretendard Variable',Pretendard,'Noto Sans KR Local',-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:'JetBrains Mono','Noto Sans KR','Noto Sans KR Local',monospace;
+  --mono:'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',monospace;
   --bg:#080f08;--bg1:#0c160c;
   --surface:#0f1e0f;--surface2:#13251a;
   --border:rgba(34,197,94,.15);--border2:rgba(34,197,94,.35);--border3:rgba(34,197,94,.55);
@@ -84,7 +84,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hdr-right-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
 .hdr-right{text-align:right;opacity:.75;color:#fff;font-size:11px;line-height:16px;}
 .hdr-right strong{font-size:13px;font-weight:700;line-height:19px;}
-.hdr-right em{font-size:10px;color:#86efac;font-style:normal;display:block;margin-top:4px;line-height:15px;}
+.hdr-right em{font-size:11px;color:#86efac;font-style:normal;display:block;margin-top:4px;line-height:15px;}
 @media(max-width:768px){ .hdr-right{display:none;} .hdr-right-wrap{gap:0;} }
 @media(max-width:640px){
   .hdr-h1{font-size:18px;}
@@ -100,7 +100,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sum-bar-wrap{background:#0f172a;padding:10px 0;position:relative;z-index:2;}
 .sum-bar{max-width:1300px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:14px;}
 .sum-item{font-size:12px;color:#94a3b8;line-height:18px;}
-.sum-item b{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-weight:700;color:#86efac;line-height:18px;vertical-align:top;}
+.sum-item b{font-family:'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace;font-weight:700;color:#86efac;line-height:18px;vertical-align:top;}
 @media(max-width:640px){.sum-bar{padding:0 14px;}.sum-item{font-size:11px;}}
 
 /* ═══════════════════ MAIN LAYOUT ═══════════════════ */
@@ -110,21 +110,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .input-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:sticky;top:20px;animation:fadeUp .5s ease both;}
 .panel-head{padding:18px 20px 14px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(21,128,61,.08),transparent);}
 .panel-head-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--green3);text-transform:uppercase;margin-bottom:3px;}
-.panel-head-sub{font-size:10.5px;color:var(--text3);}
+.panel-head-sub{font-size:11px;color:var(--text3);}
 .panel-body{padding:18px 20px;}
 .form-section{margin-bottom:20px;}
-.form-section-title{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green3);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.form-section-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green3);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .form-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
 .form-row{margin-bottom:12px;}
-.form-label{font-size:10.5px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;letter-spacing:.02em;}
-.form-label span{color:var(--green3);font-size:8.5px;margin-left:4px;}
+.form-label{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;letter-spacing:.02em;}
+.form-label span{color:var(--green3);font-size:11px;margin-left:4px;}
 .form-select,.form-input{width:100%;background:var(--bg1);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:9px 11px;color:var(--text);font-family:var(--font);font-size:12.5px;font-weight:500;-webkit-appearance:none;appearance:none;transition:border-color .2s,box-shadow .2s;}
 .form-select:focus,.form-input:focus{outline:none;border-color:var(--green3);box-shadow:0 0 0 3px rgba(34,197,94,.1);}
 .form-select{cursor:pointer;}
 .form-select-wrap{position:relative;}
 .form-select-wrap::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--green3);font-size:11px;pointer-events:none;}
 .form-input::placeholder{color:var(--text3);}
-.form-hint{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.5;}   /* v5.2.0 */
+.form-hint{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5;}   /* v5.2.0 */
 .tb-manual{margin-left:auto;text-decoration:none;color:rgba(255,255,255,.85);}   /* v5.2.0 — 작업지시서 §4 · 소방 계산서와 같은 위치 · 모양 */
 @media print{.tb-manual{display:none!important;}}
 .input-unit{display:flex;align-items:center;gap:6px;}
@@ -137,9 +137,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .check-item:hover{border-color:var(--border2);background:rgba(34,197,94,.04);}
 .check-item.checked{border-color:rgba(34,197,94,.45);background:var(--c-green-b);}
 .check-item input[type=checkbox]{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
-.check-box{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;font-size:9px;color:transparent;}
+.check-box{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;font-size:11px;color:transparent;}
 .check-item.checked .check-box{background:var(--green3);border-color:var(--green3);color:#fff;}
-.check-label{font-size:10.5px;font-weight:600;color:var(--text2);pointer-events:none;}
+.check-label{font-size:11px;font-weight:600;color:var(--text2);pointer-events:none;}
 .check-item.checked .check-label{color:var(--text);}
 
 /* CALC BTN */
@@ -159,7 +159,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .result-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:14px;background:linear-gradient(135deg,var(--surface),rgba(21,128,61,.06));}
 .result-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
 .result-title{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--green3);text-transform:uppercase;}
-.result-ver{font-size:8.5px;color:rgba(74,222,128,.65);letter-spacing:.1em;margin-top:2px;}
+.result-ver{font-size:11px;color:rgba(74,222,128,.65);letter-spacing:.1em;margin-top:2px;}
 
 /* ── 출력 버튼 그룹 ── */
 .output-btns{display:flex;gap:8px;flex-wrap:wrap;}
@@ -182,13 +182,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 .result-meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:7px;}
 .meta-item{background:var(--bg1);border:1px solid var(--border);border-radius:7px;padding:9px 11px;}
-.meta-label{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;}
+.meta-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;}
 .meta-value{font-size:11.5px;font-weight:700;color:var(--text);}
 
 .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px;}
 .sum-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 10px;text-align:center;}
 .sum-num{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;line-height:1;margin-bottom:5px;}
-.sum-lbl{font-size:9.5px;color:var(--text2);font-weight:600;letter-spacing:.03em;line-height:1.3;}
+.sum-lbl{font-size:11px;color:var(--text2);font-weight:600;letter-spacing:.03em;line-height:1.3;}
 .sum-box.t-rose .sum-num{color:var(--c-rose);}
 .sum-box.t-amber .sum-num{color:var(--c-amber);}
 .sum-box.t-green .sum-num{color:var(--c-green);}
@@ -196,24 +196,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 .facility-section{margin-bottom:14px;}
 .facility-sec-head{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
-.facility-sec-num{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;}
+.facility-sec-num{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
 .facility-sec-title{font-size:12.5px;font-weight:800;color:var(--text);}
-.facility-sec-count{font-size:9.5px;padding:2px 8px;border-radius:100px;font-weight:700;}
+.facility-sec-count{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:700;}
 .facility-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:9px;}
 .facility-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;transition:all .22s;}
 .facility-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,.35);}
 .fc-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;}
 .fc-icon{width:33px;height:33px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .fc-name{font-size:12px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:2px;}
-.fc-law{font-size:8.5px;font-weight:600;letter-spacing:.05em;color:var(--text3);font-family:var(--mono);}
-.fc-reason{font-size:10.5px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border);padding-top:7px;}
+.fc-law{font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--text3);font-family:var(--mono);}
+.fc-reason{font-size:11px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border);padding-top:7px;}
 .fc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px;}
-.fc-tag{font-size:8.5px;font-weight:700;padding:2px 6px;border-radius:4px;}
+.fc-tag{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;}
 .status-required .fc-icon{background:var(--c-rose-b);}
 .status-required .fc-tag.main{background:var(--c-rose-b);color:var(--c-rose);}
 .status-conditional .fc-icon{background:var(--c-amber-b);}
 .status-conditional .fc-tag.main{background:var(--c-amber-b);color:var(--c-amber);}
-.result-footer{text-align:center;padding:18px;font-size:10.5px;color:var(--text3);border-top:1px solid var(--border);margin-top:18px;line-height:1.8;}
+.result-footer{text-align:center;padding:18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:18px;line-height:1.8;}
 
 /* ═══════════════════ A4 미리보기 오버레이 ═══════════════════ */
 .a4-overlay{
@@ -251,7 +251,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
      Malgun Gothic 이 앞에 있으면 윈도우에서만 그 폰트로 렌더되어
      html2canvas 캡처 결과가 기기마다 달라진다. 출력물 통일이 v5.0 의 목적이다.
      서브셋에 없는 글자는 브라우저가 글자 단위로 뒤 폰트에 폴백한다. */
-  font-family:'Noto Sans KR Local','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-family:'Noto Sans KR Local','Pretendard Variable',Pretendard,'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   color:#1a1a1a;
   position:relative;
   margin:0 auto 24px;
@@ -337,8 +337,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .help-fab:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(21,128,61,.65);}
 .help-fab:active{transform:translateY(0);}
 .help-fab .fab-icon{font-size:20px;line-height:1;}
-.help-fab .fab-lbl{font-size:10px;font-weight:800;letter-spacing:.04em;}
-.help-fab .fab-sub{font-size:9px;opacity:.8;}
+.help-fab .fab-lbl{font-size:11px;font-weight:800;letter-spacing:.04em;}
+.help-fab .fab-sub{font-size:11px;opacity:.8;}
 
 /* ═══════════════════ HELP MODAL ═══════════════════ */
 /* v5.0-FAB — 모달 소방 규격(.fml-overlay/.fml-box/.fml-hd/.fml-tabs/.fml-bd) */
@@ -349,7 +349,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .help-modal{background:#fff;border-radius:20px;width:100%;max-width:800px;max-height:calc(100vh - 32px);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:slideUp .25s cubic-bezier(.34,1.5,.64,1);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.7);}
 .help-modal-head{padding:18px 22px 13px;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;color:#fff;background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#15803d 100%);}
 .help-modal-title{font-size:14px;font-weight:900;letter-spacing:.04em;color:#fff;}
-.help-modal-ver{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#86efac;letter-spacing:.12em;margin-top:3px;}
+.help-modal-ver{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:#86efac;letter-spacing:.12em;margin-top:3px;}
 .help-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.13);border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .help-tabs{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0;background:linear-gradient(135deg,#052e16 0%,#14532d 50%,#15803d 100%);}
 .help-tabs::-webkit-scrollbar{display:none;}
@@ -361,17 +361,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .help-body::-webkit-scrollbar-thumb{background:#86efac;border-radius:3px;}
 .help-panel{display:none;}.help-panel.show{display:block;}
 .help-step{display:flex;gap:10px;margin-bottom:14px;}
-.help-step-num{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.help-step-num{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 .help-step-title{font-size:12px;font-weight:800;color:#1a2744;margin-bottom:3px;}
 .help-step-desc{font-size:11px;color:#475569;line-height:1.68;}
-.law-table{width:100%;border-collapse:collapse;font-size:10.5px;}
-.law-table th{background:#f0fdf4;color:#15803d;font-weight:700;padding:7px 9px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:9.5px;}
+.law-table{width:100%;border-collapse:collapse;font-size:11px;}
+.law-table th{background:#f0fdf4;color:#15803d;font-weight:700;padding:7px 9px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:11px;}
 .law-table td{padding:7px 9px;border-bottom:1px solid #e2e8f0;color:#334155;line-height:1.5;vertical-align:top;}
 .law-table tr:last-child td{border-bottom:none;}
-.law-table td:first-child{color:#15803d;font-weight:700;font-family:var(--mono);font-size:9.5px;white-space:nowrap;}
+.law-table td:first-child{color:#15803d;font-weight:700;font-family:var(--mono);font-size:11px;white-space:nowrap;}
 .warn-box{background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:11px 13px;margin-top:10px;}
-.warn-box-title{font-size:10.5px;font-weight:700;color:#b45309;margin-bottom:3px;}
-.warn-box-desc{font-size:10.5px;color:#475569;line-height:1.68;}
+.warn-box-title{font-size:11px;font-weight:700;color:#b45309;margin-bottom:3px;}
+.warn-box-desc{font-size:11px;color:#475569;line-height:1.68;}
 
 /* LOADING */
 .loading-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
@@ -610,7 +610,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pwa-banner-icon img{width:100%;height:100%;object-fit:cover;}
 .pwa-banner-text{flex:1;}
 .pwa-banner-title{font-size:12.5px;font-weight:800;color:#86efac;margin-bottom:2px;}
-.pwa-banner-sub{font-size:10px;color:rgba(163,180,163,.8);}
+.pwa-banner-sub{font-size:11px;color:rgba(163,180,163,.8);}
 .pwa-banner-btns{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
 .pwa-install-btn{padding:7px 14px;border-radius:8px;border:none;
   background:linear-gradient(135deg,#15803d,#22c55e);
@@ -620,7 +620,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pwa-install-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(34,197,94,.4);}
 .pwa-dismiss-btn{padding:5px 10px;border-radius:7px;border:1px solid rgba(74,222,128,.25);
   background:transparent;color:rgba(163,180,163,.7);font-family:var(--font);
-  font-size:10px;cursor:pointer;text-align:center;transition:all .2s;}
+  font-size:11px;cursor:pointer;text-align:center;transition:all .2s;}
 .pwa-dismiss-btn:hover{border-color:rgba(74,222,128,.5);color:var(--text2);}
 
 
@@ -636,6 +636,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .a4-table td{border:0;border-right:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;}
 .a4-table td:first-child{border-left:1px solid #e8e8e8;}
 .a4-table tr:first-child td{border-top:1px solid #e8e8e8;}
+</style>
+<style id="mm-foot-css">/* 하단 버전 표시 — 건축 도구와 같은 형식 · 화면 폭 전체 (2026-10-31) */
+footer.mm-foot{position:relative;z-index:1;border-top:1px solid #e4e9f0;background:#fff;padding:20px;margin-top:10px;width:100%;box-sizing:border-box;align-self:stretch;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif}
+.mm-foot .foot-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.mm-foot .foot-nm{font-weight:900;font-size:13px;color:#15803d;letter-spacing:.06em}
+.mm-foot .foot-desc{font-size:11px;color:#64748b;line-height:1.6}
+.mm-foot .foot-copy{font-size:11px;color:#64748b;font-family:'DM Mono',ui-monospace,monospace}
+@media print{footer.mm-foot{display:none!important}}
 </style>
 </head>
 <body>
@@ -891,7 +899,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="empty-state" id="empty-state">
         <div class="empty-icon">🧯</div>
         <div class="empty-title">건축물 정보를 입력하세요</div>
-        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:9.5px;letter-spacing:.1em;">MANMIN-Ver5.2</span></div>
+        <div class="empty-desc">좌측에서 용도·규모 입력 후 검토 실행<br/>ISO A4 미리보기 · PDF · JPG 저장 지원<br/><br/><span style="color:var(--green3);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.1em;">MANMIN-Ver5.2</span></div>
       </div>
       <div id="result-content" style="display:none;"></div>
     </div>
@@ -1391,10 +1399,10 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
     +'<button class="out-btn jpg" id="res-jpg-btn"><span class="out-btn-icon">🖼</span>JPG 저장</button>'
     +'</div></div>'
     +'<div class="result-meta">'
-    +'<div class="meta-item"><div class="meta-label">건축물 용도</div><div class="meta-value" style="font-size:10.5px;">'+catLabel+'</div></div>'
-    +'<div class="meta-item"><div class="meta-label">검토 일시</div><div class="meta-value" style="font-size:10px;font-family:var(--mono);">'+dateStr+'</div></div>'
-    +'<div class="meta-item"><div class="meta-label">적용 법령</div><div class="meta-value" style="font-size:10px;">별표 4 · 제36728호 (2026. 10. 2.)</div></div>'
-    +'<div class="meta-item"><div class="meta-label">규모</div><div class="meta-value" style="font-size:10px;">'+addr+'</div></div>'
+    +'<div class="meta-item"><div class="meta-label">건축물 용도</div><div class="meta-value" style="font-size:11px;">'+catLabel+'</div></div>'
+    +'<div class="meta-item"><div class="meta-label">검토 일시</div><div class="meta-value" style="font-size:11px;font-family:var(--mono);">'+dateStr+'</div></div>'
+    +'<div class="meta-item"><div class="meta-label">적용 법령</div><div class="meta-value" style="font-size:11px;">별표 4 · 제36728호 (2026. 10. 2.)</div></div>'
+    +'<div class="meta-item"><div class="meta-label">규모</div><div class="meta-value" style="font-size:11px;">'+addr+'</div></div>'
     +'</div></div>'
     +'<div class="summary-row">'
     +'<div class="sum-box t-rose"><div class="sum-num">'+uniq.length+'</div><div class="sum-lbl">총 설치<br/>소방시설</div></div>'
@@ -1425,7 +1433,7 @@ function renderResult(groups,uniq,reqCnt,condCnt,catLabel,dateStr,data){
   });
   html+='<div class="fc-reason" style="margin:14px 0 0;padding:12px 14px;border:1px solid var(--border);border-radius:10px;"><b>검토 범위 밖 · 따로 확인</b> — ① 별표 5 설치 면제(예: 스프링클러 설치 시 연결살수 · 물분무 등) · 별표 6 설치 제외 ② 비고 1: 복합건축물 안 근린생활시설등은 더 강화된 기준 적용 ③ 비고 3: 내진설계 · 성능위주설계 대상 ④ 「확인」 표시는 화재안전기준 · 행정안전부령 · 협의로 정하는 대상 ⑤ 부칙 경과조치(허가 · 착공 신고 시점 기준)</div>';
   html+='<div class="result-footer">소방시설 설치 및 관리에 관한 법률 시행령 별표 4 · 대통령령 제36728호 (2026. 10. 2. 시행) 기준 | 실제 적용 시 관할 소방서 및 소방시설관리사 협의 필요<br/>'
-    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:9.5px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.2</span></div>';
+    +'<span style="color:var(--green3);font-family:\'Orbitron\',sans-serif;font-size:11px;letter-spacing:.1em;">ENGINEER KIM MANMIN · MANMIN-Ver5.2</span></div>';
   rc.innerHTML=html;
   document.getElementById('res-a4-btn').addEventListener('click',function(){openA4Preview(false);});
   document.getElementById('res-pdf-btn').addEventListener('click',function(){openA4Preview('pdf');});
@@ -1918,5 +1926,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeA4Prev
 <style>#mm-ios-tip{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:99999;display:none;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:#0B1B2E;color:#F4F1EA;border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 28px rgba(0,0,0,.35);font:600 13px/1.5 'Pretendard','Noto Sans KR',system-ui,sans-serif;max-width:560px;margin:0 auto}#mm-ios-tip b{color:#86efac}#mm-ios-tip button{flex:none;margin-left:auto;padding:7px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#F4F1EA;font:inherit;cursor:pointer}@media print{#mm-ios-tip{display:none!important}}</style>
 <div id="mm-ios-tip" role="dialog" aria-label="홈 화면에 앱 설치 안내"><span style="font-size:20px">📲</span><span>홈 화면에 앱으로 설치 — Safari <b>공유</b> 단추 → <b>홈 화면에 추가</b></span><button type="button" aria-label="설치 안내 닫기">닫기</button></div>
 <script>(function(){try{var n=navigator,ios=/iphone|ipad|ipod/i.test(n.userAgent)||(n.platform==='MacIntel'&&n.maxTouchPoints>1),sa=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||n.standalone===true;if(!ios||sa)return;try{if(sessionStorage.getItem('mm-ios-tip'))return}catch(e){}var t=document.getElementById('mm-ios-tip');if(!t)return;t.querySelector('button').addEventListener('click',function(){t.style.display='none';try{sessionStorage.setItem('mm-ios-tip','1')}catch(e){}});setTimeout(function(){t.style.display='flex'},2500)}catch(e){}})();</script>
+<!-- ══ FOOTER (하단 버전 표시) ══ -->
+<footer class="mm-foot no-print">
+  <div class="foot-inner">
+    <div>
+      <div class="foot-nm">MANMIN Ver-5.2</div>
+      <div class="foot-desc">소방시설 설치 검토 시스템 | 소방시설법 시행령</div>
+    </div>
+    <div class="foot-copy">ARCHITECT KIM MANMIN © 2026</div>
+  </div>
+</footer>
 </body>
 </html>
