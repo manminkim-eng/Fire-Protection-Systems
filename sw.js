@@ -35,7 +35,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_NAME = 'sobangsiseorak-v7.1';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
+const CACHE_NAME = 'sobangsiseorak-v7.2';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
 
 /* 사전 캐시 — 존재가 확실한 것만. 개별 실패는 건너뛴다. */
 const ASSETS = [
