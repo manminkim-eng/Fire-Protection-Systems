@@ -1,4 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
+   v5.2.3 2026-10-31 — 캐시명을 도구 판에 맞춤(종전 sobangsiseorak-v7.2 ↔ 도구 판 불일치, §25-7) · 캐시명 sobangsiseorak-v5.2.3
    v5.2.0 회차 2026-10-17 — 시행령 별표 4(대통령령 제36728호) 판정 엔진 전면 재작성 · 매뉴얼(/manual/ 캐시 제외) · 캐시명 v7.0
    S6 회차 2026-09-05 — R24①② 표 선 separate·mono 한글 폴백 소급 동반 캐시명 v6.5
    S3-0 회차 2026-09-04 — R27 html2canvas 클론 정화 동반 캐시명 v6.4
@@ -35,7 +36,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_NAME = 'sobangsiseorak-v7.2';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
+const CACHE_NAME = 'sobangsiseorak-v5.2.3';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
 
 /* 사전 캐시 — 존재가 확실한 것만. 개별 실패는 건너뛴다. */
 const ASSETS = [
