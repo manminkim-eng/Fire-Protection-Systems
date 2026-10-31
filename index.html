@@ -1533,6 +1533,11 @@ function markLongTables(paper){
   });
 }
 
+/* 2026-10-31 v5.2.6 — 헤드 상단 「③ A4 검토서 출력」 단추가 아무 반응이 없던 것 수정(작업지시서 §25-6-28).
+   이 함수는 이 스크립트의 (function(){ … })() 안에 있어 전역이 아니었고, 헤드 단추 처리(아래 별도 스크립트)는
+   typeof openA4Preview==='function' 이 거짓이라 조용히 끝났다(검토 전 · 후 모두). → 전역으로 내보낸다. */
+window.openA4Preview=openA4Preview;
+
 function closeA4Preview(){
   document.getElementById('a4-overlay').classList.remove('show');
   document.body.style.overflow='';
