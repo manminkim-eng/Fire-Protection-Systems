@@ -137,6 +137,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .check-group{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
 .check-item{display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 9px;border-radius:7px;border:1px solid var(--border);background:var(--bg1);transition:all .18s;user-select:none;}
 .check-item:hover{border-color:var(--border2);background:rgba(34,197,94,.04);}
+.check-item:focus-visible{outline:2px solid var(--green3);outline-offset:2px;}
 .check-item.checked{border-color:rgba(34,197,94,.45);background:var(--c-green-b);}
 .check-item input[type=checkbox]{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
 .check-box{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;font-size:11px;color:transparent;}
@@ -1315,10 +1316,13 @@ var SUBTYPES={"apartment": [["apt", "아파트등 (주택 5층 이상)"], ["row"
 var checks={};
 document.querySelectorAll('.check-item').forEach(function(el){
   var key=el.getAttribute('data-key'); checks[key]=false;
+  /* 2026-11-12 정밀검토 B17 — 키보드 조작: Tab 이동 · Space/Enter 선택 · aria-checked */
+  el.setAttribute('tabindex','0'); el.setAttribute('role','checkbox'); el.setAttribute('aria-checked','false');
   el.addEventListener('click',function(e){
     e.stopPropagation(); checks[key]=!checks[key];
-    el.classList.toggle('checked',checks[key]);
+    el.classList.toggle('checked',checks[key]); el.setAttribute('aria-checked',checks[key]?'true':'false');
   });
+  el.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); } });
 });
 
 /* 대분류 변경 — 세부 용도 목록 · 용도별 입력칸 보이기 (v5.2.0) */
@@ -1327,7 +1331,7 @@ function applyShow(cat){
   document.querySelectorAll('[data-show]').forEach(function(el){
     var on=el.getAttribute('data-show').split(' ').indexOf(cat)!==-1;
     el.style.display=on?'':'none';
-    if(!on){var inp=el.querySelector('input.form-input');if(inp)inp.value='';var k=el.getAttribute('data-key');if(k&&checks[k]){checks[k]=false;el.classList.remove('checked');}}
+    if(!on){var inp=el.querySelector('input.form-input');if(inp)inp.value='';var k=el.getAttribute('data-key');if(k&&checks[k]){checks[k]=false;el.classList.remove('checked');el.setAttribute('aria-checked','false');}}
   });
 }
 document.getElementById('bld-category').addEventListener('change',function(){

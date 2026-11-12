@@ -1,4 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
+   v6.1.1 (2026-11-12) — 소방시설 조건 체크 항목 키보드 조작(Tab 으로 이동 · Space/Enter 로 선택 · 선택 상태를 화면 읽기 프로그램에 알림 · 포커스 테두리) (정밀검토 B17 · 작업지시서 §25-6-78) · 판 6.1 · 캐시명 v6.1.1 (종전 sobangsiseorak-v6.1.0)
    v6.1.0 (2026-11-12) — 검색 설명 메타(description) 추가(정밀검토 B15 · 작업지시서 §25-6-75) · 판 6.1 · 캐시명 v6.1.0 (종전 sobangsiseorak-v5.2.10)
    v5.2.3 2026-10-31 — 캐시명을 도구 판에 맞춤(종전 sobangsiseorak-v7.2 ↔ 도구 판 불일치, §25-7) · 캐시명 sobangsiseorak-v5.2.3
    v5.2.0 회차 2026-10-17 — 시행령 별표 4(대통령령 제36728호) 판정 엔진 전면 재작성 · 매뉴얼(/manual/ 캐시 제외) · 캐시명 v7.0
@@ -37,7 +38,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_NAME = 'sobangsiseorak-v6.1.0';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
+const CACHE_NAME = 'sobangsiseorak-v6.1.1';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
 
 /* 사전 캐시 — 존재가 확실한 것만. 개별 실패는 건너뛴다. */
 const ASSETS = [
