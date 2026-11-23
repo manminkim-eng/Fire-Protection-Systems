@@ -109,7 +109,7 @@
     if (rowMulti) add('간이스프링클러설비', G1, '제1호 마목 1)', '모든 층', '연립주택 · 다세대주택 — 주택전용 간이스프링클러설비');
     if (cat === 'neighborhood') {
       if (useA >= 1000) add('간이스프링클러설비', G1, '제1호 마목 2)가)', '모든 층', '근린생활시설 부분 바닥면적 합계 ' + F(useA) + ' ㎡ ≥ 1,000 ㎡');
-      if (sub === 'clinicIn') add('간이스프링클러설비', G1, '제1호 마목 2)나)', '해당 시설', '의원 · 치과의원 · 한의원 — 입원실 또는 인공신장실');
+      if (sub === 'clinicIn' || sub === 'clinicKid') add('간이스프링클러설비', G1, '제1호 마목 2)나)', '해당 시설', '의원 · 치과의원 · 한의원 — 입원실 또는 인공신장실');
       if (midwife && A < 600) add('간이스프링클러설비', G1, '제1호 마목 2)다)', '해당 시설', '조산원 · 산후조리원 연면적 ' + F(A) + ' ㎡ < 600 ㎡');
     }
     if (hospGroup && useA < 600) add('간이스프링클러설비', G1, '제1호 마목 3)가)', '해당 시설', '병원 · 요양병원 바닥면적 합계 ' + F(useA) + ' ㎡ < 600 ㎡');
@@ -167,7 +167,9 @@
     if (a3 && A >= 600) A_('제2호 다목 3)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 600 ㎡');
     var a4 = (cat === 'neighborhood' && sub === 'bath') || is('culture', 'religion', 'retail', 'transport', 'sports', 'office', 'factory', 'warehouse', 'hazmat', 'auto', 'broadcast', 'power', 'tourist', 'undermall') || nationalDefense;
     if (a4 && A >= 1000) A_('제2호 다목 4)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
-    var a5 = cat === 'education' || (cat === 'training' && !tLodge) || (cat === 'animal' && sub !== 'openAn' && sub !== 'barn') || cat === 'waste' || (cat === 'correctional' && !nationalDefense) || cat === 'cemetery';
+    /* v6.1.5 (교차검증 2026-11-23 P1) — 다목5) 제외는 「기둥과 지붕만으로 구성되어 외부와 기류가 통하는 장소」(openAn)뿐.
+       「사람이 거주하지 않거나 벽이 없는 축사」(barn)는 비상경보(나목) · 비상방송(바목) · 비상조명(라목)만 제외 — 자동화재탐지 대상 */
+    var a5 = cat === 'education' || (cat === 'training' && !tLodge) || (cat === 'animal' && sub !== 'openAn') || cat === 'waste' || (cat === 'correctional' && !nationalDefense) || cat === 'cemetery';
     if (a5 && A >= 2000) A_('제2호 다목 5)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 2,000 ㎡');
     if (welfareLiving) A_('제2호 다목 6)', '모든 층', '노유자 생활시설');
     if ((cat === 'welfare' && !welfareLiving && A >= 400) || (tLodge && Oc >= 100)) A_('제2호 다목 7)', '모든 층', cat === 'welfare' ? '노유자 시설 연면적 ' + F(A) + ' ㎡ ≥ 400 ㎡' : '숙박시설이 있는 수련시설 수용인원 ' + F(Oc) + '명 ≥ 100명');
@@ -200,6 +202,7 @@
     if (cat === 'welfare' && !welfareLiving && maxF >= 500) sok.push(['제2호 사목 2)', '노유자 시설 — 바닥면적 ' + F(maxF) + ' ㎡ ≥ 500 ㎡인 층']);
     if (tLodge && maxF >= 500) sok.push(['제2호 사목 3)', '숙박시설이 있는 수련시설 — ' + F(maxF) + ' ㎡ ≥ 500 ㎡인 층']);
     if (woodTreasure) sok.push(['제2호 사목 4)', '보물 · 국보로 지정된 목조건축물']);
+    /* v6.1.5 (P2) — 사목5)가)는 「입원실이 있는」 의원만. 인공신장실만 있는 의원(clinicKid)은 간이스프링클러(마목2)나))만 해당 */
     if (cat === 'neighborhood' && sub === 'clinicIn') sok.push(['제2호 사목 5)가)', '의원 · 치과의원 · 한의원 입원실']);
     if (midwife) sok.push(['제2호 사목 5)나)', '조산원 · 산후조리원']);
     if (hospGroup) sok.push(['제2호 사목 6)가)', '종합병원 · 병원 · 치과병원 · 한방병원 · 요양병원']);

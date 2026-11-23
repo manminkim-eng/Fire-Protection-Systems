@@ -11,7 +11,7 @@ ENG = m.group(0) if m else SRC
 N = int([a for a in sys.argv[2:] if a.isdigit()][0]) if any(a.isdigit() for a in sys.argv[2:]) else 40000
 
 SUBS = {
- 'apartment': ['apt', 'row', 'multi', 'dorm'], 'neighborhood': ['clinicIn', 'clinic', 'midwife', 'bath', 'etcN'],
+ 'apartment': ['apt', 'row', 'multi', 'dorm'], 'neighborhood': ['clinicIn', 'clinicKid', 'clinic', 'midwife', 'bath', 'etcN'],
  'culture': ['perf', 'hall', 'exhib', 'zoo', 'cinema'], 'religion': ['relig', 'religWood'], 'retail': ['mall', 'market', 'etcR'],
  'transport': ['bus', 'rail', 'subway', 'port', 'etcT'], 'medical': ['hosp', 'nursing', 'psych', 'rehab'],
  'education': ['school', 'kinder', 'library', 'research', 'eduDorm', 'eduCamp'], 'welfare': ['wLiving', 'wEtc'],
@@ -102,7 +102,7 @@ def rules(d):
     if rm: add('간이스프링클러설비', '제1호 마목 1)')
     if c == 'neighborhood':
         if useA >= 1000: add('간이스프링클러설비', '제1호 마목 2)가)')
-        if s == 'clinicIn': add('간이스프링클러설비', '제1호 마목 2)나)')
+        if s in ('clinicIn', 'clinicKid'): add('간이스프링클러설비', '제1호 마목 2)나)')  # v6.1.5 P2
         if mid and A < 600: add('간이스프링클러설비', '제1호 마목 2)다)')
     if hosp and useA < 600: add('간이스프링클러설비', '제1호 마목 3)가)')
     if psy and 300 <= useA < 600: add('간이스프링클러설비', '제1호 마목 3)나)')
@@ -151,7 +151,7 @@ def rules(d):
     if Fa >= 6: AF('제2호 다목 2)')
     if ((c == 'neighborhood' and s != 'bath') or (c == 'medical' and s not in ('psych', 'nursing')) or c in ('leisure', 'funeral', 'mixed')) and A >= 600: AF('제2호 다목 3)')
     if ((c, s) == ('neighborhood', 'bath') or c in ('culture', 'religion', 'retail', 'transport', 'sports', 'office', 'factory', 'warehouse', 'hazmat', 'auto', 'broadcast', 'power', 'tourist', 'undermall') or mil) and A >= 1000: AF('제2호 다목 4)')
-    if (c == 'education' or (c == 'training' and not tl) or (c == 'animal' and s == 'etcAn') or c == 'waste' or (c == 'correctional' and not mil) or c == 'cemetery') and A >= 2000: AF('제2호 다목 5)')
+    if (c == 'education' or (c == 'training' and not tl) or (c == 'animal' and s != 'openAn') or c == 'waste' or (c == 'correctional' and not mil) or c == 'cemetery') and A >= 2000: AF('제2호 다목 5)')
     if wl: AF('제2호 다목 6)')
     if (c == 'welfare' and not wl and A >= 400) or (tl and Oc >= 100): AF('제2호 다목 7)')
     if (c, s) == ('medical', 'nursing'): AF('제2호 다목 8)가)')
