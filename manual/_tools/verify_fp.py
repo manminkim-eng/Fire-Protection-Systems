@@ -39,6 +39,7 @@ def rules(d):
     bm, bSum, f12, bUse, Oc = g('bm'), g('bSum'), g('f12'), g('bUse'), g('Oc'); useA = g('useA') or A
     T = set(); add = lambda f, cl, t='req': T.add((f, cl, t))
     gas = (c, s) == ('hazmat', 'gas'); tun = c == 'tunnel'; ugd = c == 'underground'; barn = (c, s) == ('animal', 'barn')
+    opn = (c, s) == ('animal', 'openAn')  # v6.1.6 — 벽 없는 동식물 시설: 나목 · 바목 · 제3호 라목 제외
     apt = (c, s) == ('apartment', 'apt'); rm = c == 'apartment' and s in ('row', 'multi'); hotel = c == 'hotel'
     wl = (c, s) == ('welfare', 'wLiving'); tl = (c, s) == ('training', 'tLodge'); mid = (c, s) == ('neighborhood', 'midwife')
     logi = (c, s) == ('warehouse', 'logis'); fw = c in ('factory', 'warehouse'); ess = c == 'power' and s in ('ess', 'essUps')
@@ -137,7 +138,7 @@ def rules(d):
     if rm: add('단독경보형 감지기', '제2호 가목 5)')
     if 0 < g('pkUnder') < 200: add('단독경보형 감지기', '제2호 가목 6)')
     # 2나
-    if not ((fw and b('nonCombMat')) or gas or barn or ugd):
+    if not ((fw and b('nonCombMat')) or gas or barn or opn or ugd):
         if A >= 400: add('비상경보설비', '제2호 나목 1)')
         if bm >= (100 if (c, s) == ('culture', 'perf') else 150): add('비상경보설비', '제2호 나목 2)')
         if tun and g('tunL') >= 500: add('비상경보설비', '제2호 나목 3)')
@@ -167,7 +168,7 @@ def rules(d):
     if af and (c in ('neighborhood', 'culture', 'religion', 'retail', 'transport', 'medical', 'welfare', 'sports', 'office', 'hotel', 'leisure', 'power', 'funeral', 'undermall') or logi or (c, s) in (('education', 'library'), ('broadcast', 'station'), ('factory', 'lithium'))):
         add('시각경보기', '제2호 라목')
     if mkt: add('화재알림설비', '제2호 마목')
-    if not (gas or barn or tun or ugd):
+    if not (gas or barn or opn or tun or ugd):
         if A >= 3500: add('비상방송설비', '제2호 바목 1)')
         if Fa >= 11: add('비상방송설비', '제2호 바목 2)')
         if Fb >= 3: add('비상방송설비', '제2호 바목 3)')
@@ -193,7 +194,7 @@ def rules(d):
     if not (tun or barn): add('유도등 · 유도표지', '제3호 다목 1)')
     if (c, s) == ('leisure', 'club') or c in ('culture', 'religion', 'sports'): add('객석유도등', '제3호 다목 2)')
     if not (tun or ugd or gas): add('피난유도선', '제3호 다목 3)', 'chk')
-    if not ((c == 'warehouse' and s in ('store', 'dock')) or gas or barn):
+    if not ((c == 'warehouse' and s in ('store', 'dock')) or gas or barn or opn):
         e1 = Fa + Fb >= 5 and A >= 3000
         if e1: add('비상조명등', '제3호 라목 1)')
         elif bm >= 450: add('비상조명등', '제3호 라목 2)')

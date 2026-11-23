@@ -1,4 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
+   v6.1.6 (2026-11-24) — 교차검증 2026-11-23 권장 · 권고: 음수 차단 · 빈 칸 「입력 확인」 줄(P3) · 검토 뒤 입력 변경 시 A4 막음(P4) · 범위 밖 안내 — 나목3) · 라목14) · 다목4) · 별표 2 비고 · 부칙 적용례(P5 · P6 · P9) · 가스시설 등 연면적 0 허용(P8) · 기둥과 지붕만 있는 동식물 시설 비상경보 · 비상방송 · 비상조명 제외 · 캐시명 v6.1.6 (종전 v6.1.5)
    v6.1.5 (2026-11-24) — 교차검증 2026-11-23 반영: 축사 2,000 ㎡ 이상 자동화재탐지(다목5), P1) · 의원 「인공신장실만 있음」 분리 — 자동화재속보(사목5)가))는 입원실만(P2) · 캐시명 v6.1.5 (종전 v6.1.4)
    v6.1.4 (2026-11-12) — html2canvas 1.4.1 머리 태그 SRI(integrity sha384 · crossorigin) · 공통 인쇄 원본 MM-PRINT v1.0 → v1.1(지연 로더도 SRI)(정밀검토 B8 · html2canvas SRI) — 화면 · 계산 · 인쇄 불변 · 작업지시서 §25-6-87 · 캐시명 v6.1.4 (종전 v6.1.3)
    v6.1.3 (2026-11-12) — Pretendard CSS SRI(integrity · crossorigin)(정밀검토 C2) — 화면 · 계산 · 인쇄 불변 · 작업지시서 §25-6-82 · 캐시명 v6.1.3 (종전 v6.1.2)
@@ -42,7 +43,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_NAME = 'sobangsiseorak-v6.1.5';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
+const CACHE_NAME = 'sobangsiseorak-v6.1.6';   /* v5.2.0 : 별표 4 판정 엔진 전면 재작성 */
 
 /* 사전 캐시 — 존재가 확실한 것만. 개별 실패는 건너뛴다. */
 const ASSETS = [

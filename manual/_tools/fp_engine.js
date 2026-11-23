@@ -23,6 +23,9 @@
     var sb = function () { for (var i = 0; i < arguments.length; i++) if (sub === arguments[i]) return true; return false; };
     var gas = cat === 'hazmat' && sub === 'gas', tunnel = cat === 'tunnel', ug = cat === 'underground';
     var barn = cat === 'animal' && sub === 'barn';
+    /* v6.1.6 — 「기둥과 지붕만으로 구성되어 외부와 기류가 통하는 장소」(openAn)는 벽이 없는 동물 및 식물 관련 시설 →
+       비상경보(제2호 나목) · 비상방송(바목) · 비상조명(제3호 라목) 제외 문구 「사람이 거주하지 않거나 벽이 없는 축사 등 동물 및 식물 관련 시설」에 해당 */
+    var openAn = cat === 'animal' && sub === 'openAn';
     var aptEtc = cat === 'apartment' && sub === 'apt';
     var rowMulti = cat === 'apartment' && sb('row', 'multi');
     var dorm = (cat === 'apartment' && sub === 'dorm') || (cat === 'education' && sub === 'eduDorm') || (cat === 'training' && sub === 'tDorm');
@@ -149,7 +152,7 @@
     if (rowMulti) add('단독경보형 감지기', G2, '제2호 가목 5)', '각 세대', '연립주택 · 다세대주택 — 연동형');
     if (pkUnder > 0 && pkUnder < 200) add('단독경보형 감지기', G2, '제2호 가목 6)', '지하 차고 · 주차장 부분', '지하 차고 · 주차 면적 ' + F(pkUnder) + ' ㎡ < 200 ㎡');
     // 나. 비상경보설비 — 불연재료 공장 · 창고 · 가스시설 · 축사 등 · 지하구 제외
-    var noAlarm = (facWh && x('nonCombMat')) || gas || barn || ug;
+    var noAlarm = (facWh && x('nonCombMat')) || gas || barn || openAn || ug;
     if (!noAlarm) {
       if (A >= 400) add('비상경보설비', G2, '제2호 나목 1)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 400 ㎡');
       var lim = cat === 'culture' && sub === 'perf' ? 100 : 150;
@@ -191,7 +194,7 @@
     // 마. 화재알림설비
     if (market) add('화재알림설비', G2, '제2호 마목', '해당 시설', '판매시설 중 전통시장');
     // 바. 비상방송설비 — 가스시설 · 축사 등 · 터널 · 지하구 제외
-    if (!gas && !barn && !tunnel && !ug) {
+    if (!gas && !barn && !openAn && !tunnel && !ug) {
       if (A >= 3500) add('비상방송설비', G2, '제2호 바목 1)', '모든 층', '연면적 ' + F(A) + ' ㎡ ≥ 3,500 ㎡');
       if (Fa >= 11) add('비상방송설비', G2, '제2호 바목 2)', '모든 층', '층수 ' + F(Fa) + '층 ≥ 11층');
       if (Fb >= 3) add('비상방송설비', G2, '제2호 바목 3)', '모든 층', '지하층 ' + F(Fb) + '개 층 ≥ 3층');
@@ -236,7 +239,7 @@
     if (!tunnel && !barn) add('유도등 · 유도표지', G3, '제3호 다목 1)', '모든 층', '피난구유도등 · 통로유도등 · 유도표지 — 모든 특정소방대상물(축사 사육 부분 · 터널 제외)');
     if ((cat === 'leisure' && sub === 'club') || is('culture', 'religion', 'sports')) add('객석유도등', G3, '제3호 다목 2)', '객석', '유흥주점(무대) · 문화 및 집회 · 종교 · 운동시설');
     if (!tunnel && !ug && !gas) add('피난유도선', G3, '제3호 다목 3)', '해당 장소', '화재안전기준(NFTC 303)에서 정하는 장소이면 설치', 'chk');
-    var noEL = (cat === 'warehouse' && sb('store', 'dock')) || gas || barn;
+    var noEL = (cat === 'warehouse' && sb('store', 'dock')) || gas || barn || openAn;
     if (!noEL) {
       var el1 = Fa + Fb >= 5 && A >= 3000;
       if (el1) add('비상조명등', G3, '제3호 라목 1)', '모든 층', '지하층 포함 ' + F((Fa + Fb)) + '층 ≥ 5층 · 연면적 ' + F(A) + ' ㎡ ≥ 3,000 ㎡');
@@ -261,7 +264,7 @@
     if (um && A >= 1000) add('제연설비', G5, '제5호 가목 5)', '모든 층', '지하상가 연면적 ' + F(A) + ' ㎡ ≥ 1,000 ㎡');
     if (tunnel) add('제연설비', G5, '제5호 가목 6)', '터널', '행정안전부령이 정하는 터널이면 설치', 'chk');
     if (x('specialStair') && !(aptEtc && x('corridorApt'))) add('제연설비', G5, '제5호 가목 7)', '부속실 · 승강장', '특별피난계단 · 비상용 승강기 승강장 · 피난용 승강기 승강장(갓복도형 아파트등 제외) — NFTC 501A');
-    else if (!x('specialStair') && (Fa >= 11 || Fb >= 3) && !(aptEtc && x('corridorApt'))) add('제연설비', G5, '제5호 가목 7)', '부속실 · 승강장', '11층 이상 또는 지하 3층 이하 — 건축법상 특별피난계단 · 비상용 승강기 설치 대상이면 부속실 제연(NFTC 501A)', 'chk');
+    else if (!x('specialStair') && (Fa >= 11 || Fb >= 3) && !(aptEtc && x('corridorApt'))) add('제연설비', G5, '제5호 가목 7)', '부속실 · 승강장', '11층(공동주택 16층) 이상인 층 또는 지하 3층 이하인 층(각각 바닥면적 400 ㎡ 미만인 층 제외 · 갓복도식 공동주택 제외 — 건축법 시행령 제35조②) — 특별피난계단 · 비상용 승강기 설치 대상이면 부속실 제연(NFTC 501A)', 'chk');
     if (!gas && !ug) {
       var c1 = Fa >= 5 && A >= 6000, c2 = !c1 && Fa + Fb >= 7, c3 = !c1 && !c2 && Fb >= 3 && bSum >= 1000;
       if (c1) add('연결송수관설비', G5, '제5호 나목 1)', '모든 층', '층수 ' + F(Fa) + '층 ≥ 5층 · 연면적 ' + F(A) + ' ㎡ ≥ 6,000 ㎡');
