@@ -7,6 +7,11 @@ const CASES=[
  {name:'노유자 생활시설 2층',cat:'welfare',sub:'wLiving',v:{'total-area':450,'floors-above':2,'max-floor-area':300},c:[],expect:['간이스프링클러설비','자동화재탐지설비','자동화재속보설비','피난기구'],absent:['스프링클러설비']},
  {name:'지상4 지하2',cat:'neighborhood',sub:'etcN',v:{'total-area':900,'floors-above':4,'floors-below':2,'bsum-area':300,'bm-area':150},c:[],expect:['비상경보설비','연결살수설비'],absent:['스프링클러설비','비상방송설비']},
  {name:'터널 1,200 m',cat:'tunnel',sub:'tun',v:{'tun-len':1200},c:[],expect:['옥내소화전설비','자동화재탐지설비','비상콘센트설비'],absent:['피난기구']},
+ {name:'축사 2,500 ㎡ (v6.1.5 다목5)',cat:'animal',sub:'barn',v:{'total-area':2500,'floors-above':1},c:[],expect:['자동화재탐지설비'],absent:['비상경보설비','비상방송설비']},
+ {name:'기둥 · 지붕만 2,500 ㎡',cat:'animal',sub:'openAn',v:{'total-area':2500,'floors-above':1},c:[],expect:[],absent:['자동화재탐지설비']},
+ {name:'의원 인공신장실만 (v6.1.5 사목5)가)',cat:'neighborhood',sub:'clinicKid',v:{'total-area':300,'floors-above':2},c:[],expect:['간이스프링클러설비'],absent:['자동화재속보설비']},
+ {name:'의원 입원실',cat:'neighborhood',sub:'clinicIn',v:{'total-area':300,'floors-above':2},c:[],expect:['간이스프링클러설비','자동화재속보설비'],absent:[]},
+ {name:'의원 둘 다 없음',cat:'neighborhood',sub:'clinic',v:{'total-area':300,'floors-above':2},c:[],expect:[],absent:['간이스프링클러설비','자동화재속보설비']},
 ];
 const run=async(pg,C)=>{await pg.selectOption('#bld-category',C.cat);await pg.selectOption('#bld-subtype',C.sub);
  await pg.evaluate(v=>{document.querySelectorAll('.form-input').forEach(e=>{e.value=''});for(const k in v){document.getElementById(k).value=v[k];}},C.v);
