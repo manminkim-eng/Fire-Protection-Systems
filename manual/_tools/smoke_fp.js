@@ -12,18 +12,23 @@ const CASES=[
  {name:'의원 인공신장실만 (v6.1.5 사목5)가)',cat:'neighborhood',sub:'clinicKid',v:{'total-area':300,'floors-above':2},c:[],expect:['간이스프링클러설비'],absent:['자동화재속보설비']},
  {name:'의원 입원실',cat:'neighborhood',sub:'clinicIn',v:{'total-area':300,'floors-above':2},c:[],expect:['간이스프링클러설비','자동화재속보설비'],absent:[]},
  {name:'의원 둘 다 없음',cat:'neighborhood',sub:'clinic',v:{'total-area':300,'floors-above':2},c:[],expect:[],absent:['간이스프링클러설비','자동화재속보설비']},
+ {name:'기둥 · 지붕만 4,000 ㎡ 5층 (v6.1.6 나목 · 바목 · 라목 제외)',cat:'animal',sub:'openAn',v:{'total-area':4000,'floors-above':5},c:[],expect:['소화기구'],absent:['비상경보설비','비상방송설비','비상조명등','자동화재탐지설비']},
+ {name:'가스시설 연면적 0 (v6.1.6 P8)',cat:'hazmat',sub:'gas',v:{},c:[],expect:['소화기구'],absent:[],w:0},
+ {name:'전기저장시설 연면적 0 (v6.1.6 P8)',cat:'power',sub:'ess',v:{},c:[],expect:['소화기구'],absent:[]},
+ {name:'국가유산 목조 연면적 0 (v6.1.6 P8)',cat:'heritage',sub:'woodTreasure',v:{},c:[],expect:['소화기구'],absent:[]},
+ {name:'층수 빈 칸 → 입력 확인 (v6.1.6 P3)',cat:'office',sub:'off',v:{'total-area':1200},c:[],expect:[],absent:[],w:1},
 ];
 const run=async(pg,C)=>{await pg.selectOption('#bld-category',C.cat);await pg.selectOption('#bld-subtype',C.sub);
  await pg.evaluate(v=>{document.querySelectorAll('.form-input').forEach(e=>{e.value=''});for(const k in v){document.getElementById(k).value=v[k];}},C.v);
  await pg.evaluate(cs=>{document.querySelectorAll('.check-item.checked').forEach(e=>e.click());cs.forEach(k=>document.querySelector('.check-item[data-key="'+k+'"]').click());},C.c);
  await pg.click('#calc-btn');await pg.waitForTimeout(300);
- return pg.evaluate(()=>({names:window._RD.uniq.map(u=>u.f),req:window._RD.reqCnt,chk:window._RD.condCnt,cards:document.querySelectorAll('.facility-card').length}));};
+ return pg.evaluate(()=>({names:window._RD.uniq.map(u=>u.f),req:window._RD.reqCnt,chk:window._RD.condCnt,cards:document.querySelectorAll('.facility-card').length,warn:(window._RD.warn||[]).length}));};
 (async()=>{const s=await server(repo,8975);const b=await chromium.launch();const R=[];
  for(const [w,h,d] of [[1440,900,1],[390,844,2]]){
   const ctx=await b.newContext({viewport:{width:w,height:h},deviceScaleFactor:d,serviceWorkers:'block',locale:'ko-KR'});await setup(ctx);
   const pg=await ctx.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',dl=>{errs.push('dialog '+dl.message());dl.dismiss();});
   await pg.goto('http://127.0.0.1:8975/index.html');await pg.waitForTimeout(1200);
-  for(const C of CASES){const r=await run(pg,C);R.push({w,case:C.name,ok:C.expect.every(n=>r.names.includes(n))&&C.absent.every(n=>!r.names.includes(n))&&r.cards===r.names.length,n:r.names.length,req:r.req,chk:r.chk,miss:C.expect.filter(n=>!r.names.includes(n)),extra:C.absent.filter(n=>r.names.includes(n))});}
+  for(const C of CASES){const r=await run(pg,C);R.push({w,case:C.name,ok:C.expect.every(n=>r.names.includes(n))&&C.absent.every(n=>!r.names.includes(n))&&r.cards===r.names.length&&(C.w===undefined||r.warn===C.w),warn:r.warn,n:r.names.length,req:r.req,chk:r.chk,miss:C.expect.filter(n=>!r.names.includes(n)),extra:C.absent.filter(n=>r.names.includes(n))});}
   const show=await pg.evaluate(()=>{const el=document.getElementById('tun-len').closest('.form-row');return getComputedStyle(el).display});
   await run(pg,CASES[0]);await pg.screenshot({path:path.join(out,`result_${w}.png`),fullPage:true});
   await pg.click('#res-a4-btn');await pg.waitForTimeout(800);await pg.screenshot({path:path.join(out,`a4_${w}.png`),fullPage:true});
