@@ -27,7 +27,7 @@ window.__helpClose=()=>document.getElementById('help-close').click();`;
 const EXA="__ex('A')";
 const SHOTS=[
  {id:'s01_overview',pre:EXA+";window.scrollTo(0,0)",clip:'viewport',m:[['nth:.tb|0','탭 3개'],['#mm-manual-btn','📘 매뉴얼'],['.sum-bar','요약 바'],['.input-panel','입력'],['.result-header','결과']]},
- {id:'s02_header',clip:'.hdr-shell',m:[['.hdr-h1','도구 이름 · Ver-5.2'],['#mm-manual-btn','📘 매뉴얼 — 탭 막대 끝'],['.hdr-right','별표 4 · 제36728호 · 2026. 10. 2.'],['.tab-bar-inner','탭 3개']]},
+ {id:'s02_header',clip:'.hdr-shell',m:[['.hdr-h1','도구 이름 · Ver-6.1'],['#mm-manual-btn','📘 매뉴얼 — 탭 막대 끝'],['.hdr-right','별표 4 · 제36728호 · 2026. 10. 2.'],['.tab-bar-inner','탭 3개']]},
  {id:'s03_use',clip:'sec:용도 분류',m:[['up:1|#bld-category','대분류 31종 (별표 2)'],['#sub-type-row','세부 용도']]},
  {id:'s04_scale',clip:'sec:규모 정보',m:[['row:연면적','연면적'],['row:층수 (지상)','층수 — 지하층 제외'],['row:지하층 수','지하층 수'],['row:수용인원','수용인원'],['row:해당 용도 바닥면적','해당 용도 면적 — 비우면 연면적']]},
  {id:'s05_floor',clip:'sec:층별 바닥면적',m:[['row:가장 넓은 층','가장 넓은 층'],['row:4층 이상 층','4층 이상 층 최대'],['row:지하층 · 무창층 중','지하 · 무창층 최대'],['row:지하층 바닥면적 합계','지하층 합계'],['row:1층 + 2층','1 · 2층 합계']]},
